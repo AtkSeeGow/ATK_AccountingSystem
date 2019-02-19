@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAccountingSystemMainProject.Domain", "..\Source\WebAccountingSystemMainProject.Domain\WebAccountingSystemMainProject.Domain.csproj", "{DF3951D9-0648-4C99-B2AF-D90C893618F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAccountingSystemMainProject.Repository", "..\Source\WebAccountingSystemMainProject.Repository\WebAccountingSystemMainProject.Repository.csproj", "{017C8245-C417-42FC-BD67-516932A77DFA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAccountingSystemMainProject.Service", "..\Source\WebAccountingSystemMainProject.Service\WebAccountingSystemMainProject.Service.csproj", "{DB3A75BF-0A81-4247-AF8B-3F1D63227A71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAccountingSystemMainProject.Web", "..\Source\WebAccountingSystemMainProject.Web\WebAccountingSystemMainProject.Web.csproj", "{CF40BA56-C7BF-4A07-96EF-9FF155F4199F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAccountingSystemMainProject.Test", "..\Source\WebAccountingSystemMainProject.Test\WebAccountingSystemMainProject.Test.csproj", "{73553618-C300-4F4C-8F0B-35FD54C1F89A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF3951D9-0648-4C99-B2AF-D90C893618F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF3951D9-0648-4C99-B2AF-D90C893618F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF3951D9-0648-4C99-B2AF-D90C893618F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF3951D9-0648-4C99-B2AF-D90C893618F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{017C8245-C417-42FC-BD67-516932A77DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{017C8245-C417-42FC-BD67-516932A77DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{017C8245-C417-42FC-BD67-516932A77DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{017C8245-C417-42FC-BD67-516932A77DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB3A75BF-0A81-4247-AF8B-3F1D63227A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB3A75BF-0A81-4247-AF8B-3F1D63227A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB3A75BF-0A81-4247-AF8B-3F1D63227A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB3A75BF-0A81-4247-AF8B-3F1D63227A71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF40BA56-C7BF-4A07-96EF-9FF155F4199F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF40BA56-C7BF-4A07-96EF-9FF155F4199F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF40BA56-C7BF-4A07-96EF-9FF155F4199F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF40BA56-C7BF-4A07-96EF-9FF155F4199F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73553618-C300-4F4C-8F0B-35FD54C1F89A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73553618-C300-4F4C-8F0B-35FD54C1F89A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73553618-C300-4F4C-8F0B-35FD54C1F89A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73553618-C300-4F4C-8F0B-35FD54C1F89A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DA43D8E-16B5-4CD7-A55D-03FCF0D826B1}
+	EndGlobalSection
+EndGlobal

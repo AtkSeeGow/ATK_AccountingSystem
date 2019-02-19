@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Login Page";
+}
+
+<loginComponent></loginComponent>
+
+<script>
+    System.import('@Url.Content("~")/app/login/main').catch(function (err) { console.error(err); });
+</script>

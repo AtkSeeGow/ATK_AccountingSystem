@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "General Ledger Page";
+}
+
+<style>
+    .mydp .selector {
+        z-index: 999
+    }
+</style>
+
+<generalLedgerComponent></generalLedgerComponent>
+
+<script>
+    System.import('@Url.Content("~")/app/generalLedger/main').catch(function (err) { console.error(err); });
+</script>

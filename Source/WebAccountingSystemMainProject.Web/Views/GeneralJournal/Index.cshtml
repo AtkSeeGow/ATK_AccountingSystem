@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "General Journal Page";
+}
+
+<style>
+    .mydp .selector {
+        z-index: 999
+    }
+</style>
+
+<generalJournalComponent></generalJournalComponent>
+
+<script>
+    System.import('@Url.Content("~")/app/generalJournal/main').catch(function (err) { console.error(err); });
+</script>
