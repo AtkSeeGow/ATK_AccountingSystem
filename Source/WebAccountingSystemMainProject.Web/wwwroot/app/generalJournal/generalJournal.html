@@ -43,7 +43,12 @@
                     <div class="col-lg-10">
                         <div class="form-group">
                             <label for="entrySummary" class="text-info">Summary:</label>
-                            <input type="text" class="form-control" name="entrySummary" value="" [(ngModel)]="conditionForView.entrySummary"/>
+                            <input type="text" class="form-control" name="entrySummary" value="" [(ngModel)]="conditionForView.entrySummary" />
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input name="isByDate" [(ngModel)]="conditionForView.entryIsByDate" type="checkbox" (ngModelChange)="conditionForView.entryIsByDate=$event?true:false">Is By Date
+                            </label>
                         </div>
                     </div>﻿
                     <div class="col-lg-2" style="text-align: center;">
