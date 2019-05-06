@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,6 +117,13 @@ namespace WebAccountingSystemMainProject.Repository
 
             if (!string.IsNullOrEmpty(entryForCondition.EntrySummary))
                 filter = filter & builder.Where(item => item.EntrySummary.Contains(entryForCondition.EntrySummary));
+            
+            if(entryForCondition.EntryIsByDate)
+            {
+                var hashSet = new HashSet<DateTime?>();
+                this.TEntityCollection.Find(filter).ForEachAsync(item => hashSet.Add(item.EntryTradingDay)).Wait();
+                return builder.Where(item => hashSet.Contains(item.EntryTradingDay));
+            }
 
             return filter;
         }

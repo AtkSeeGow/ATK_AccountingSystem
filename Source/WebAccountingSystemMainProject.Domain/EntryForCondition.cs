@@ -17,5 +17,11 @@ namespace WebAccountingSystemMainProject.Domain
         /// </summary>
         [DataMember]
         public DateTime? EntryTradingDayEnd { get; set; }
+
+        /// <summary>
+        /// 查詢結果是否對日
+        /// </summary>
+        [DataMember]
+        public bool EntryIsByDate { get; set; }
     }
 }
