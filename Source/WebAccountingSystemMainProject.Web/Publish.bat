@@ -1,10 +1,11 @@
-call cd .\wwwroot\app
+call dotnet publish -c Release -r linux-x64
 
+call cd .\bin\Release\netcoreapp2.1\linux-x64\publish\wwwroot\app
+
+call npm install
 call npm run tsc
 
-call cd ..\..
-
-call dotnet publish -c Release -r linux-x64
+call cd ../../../../../../../
 
 call docker build -t atkseegow/accounting_system_web .
 
