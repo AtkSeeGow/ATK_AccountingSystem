@@ -104,13 +104,14 @@
                 <p></p>
             </div>
             <div class="panel-body">
-                <div class="table-responsive">
+                <div class="table-responsive" (click)="expand(keyValuePair)">
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align:center">Code</th>
-                                <th style="text-align:center">Name</th>
-                                <th style="text-align:center">Type</th>
+                                <th style="text-align:center; width:25%">Code</th>
+                                <th style="text-align:center; width:25%">Name</th>
+                                <th style="text-align:center; width:25%">Type</th>
+                                <th style="text-align:center; width:25%">Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,11 +119,12 @@
                                 <td>{{keyValuePair.key.accountingSubjectCode}}</td>
                                 <td>{{keyValuePair.key.accountingSubjectName ? keyValuePair.key.accountingSubjectName : ''}}</td>
                                 <td>{{keyValuePair.key.accountingSubjectType ? AccountingSubjectTypeUtility.ToString(keyValuePair.key.accountingSubjectType) :''}}</td>
+                                <td>{{keyValuePair.key.total.value() < 0 ? '(' + keyValuePair.key.total.format('0,0').replace('-', '') + ')' : keyValuePair.key.total.format('0,0') }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive" *ngIf="keyValuePair.key.isExpand">
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>

@@ -83,6 +83,7 @@ namespace WebAccountingSystemMainProject.Web
                     result.Add(new KeyValuePair<AccountingSubject, IList<Entry>>(new AccountingSubject() { AccountingSubjectCode = keyValuePair.Key, AccountingSubjectType = Domain.Enum.AccountingSubjectType.None }, keyValuePair.Value));
             }
 
+            result = result.OrderBy(item => item.Key.AccountingSubjectType).ThenBy(item => item.Key.AccountingSubjectCode).ToList();
             return result;
         }
 
