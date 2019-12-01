@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ChangeDetectorRef, ViewChild, AfterViewChecked } from '@angular/core';
+﻿import { Component, AfterViewInit, ChangeDetectorRef, ViewChild, AfterViewChecked } from '@angular/core';
 
 import * as moment from 'moment';
 import * as numeral from 'numeral';
@@ -79,6 +79,7 @@ declare const $: any;
 
                 component.totalAmount.input(keyValuePair.key.accountingSubjectType, balanceAmount);
                 keyValuePair.key.isExpand = false;
+                keyValuePair.key.total = numeral(balanceAmount);
             });
         }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
     }

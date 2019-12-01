@@ -51,7 +51,8 @@ export class GeneralJournalUtility {
                             process(result);
                         }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
                     },
-                    strict: false
+                    strict: false,
+                    width: 150
                 },
                 {
                     data: "entryType",
@@ -84,7 +85,8 @@ export class GeneralJournalUtility {
                             process(result);
                         }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
                     },
-                    strict: false
+                    strict: false,
+                    width: 300
                 },
                 {
                     data: "entryAmount",
@@ -93,7 +95,7 @@ export class GeneralJournalUtility {
                     numericFormat: {
                         pattern: '$0,0.00',
                         culture: 'zh-TW'
-                    },
+                    }
                 },
                 {
                     data: "entrySummary",
