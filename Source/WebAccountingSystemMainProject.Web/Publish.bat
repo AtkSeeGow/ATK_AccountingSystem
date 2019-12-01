@@ -7,8 +7,8 @@ call npm run tsc
 
 call cd ../../../../../../../
 
-call docker build -t atkseegow/accounting_system_web:1.0.0 .
-call docker push atkseegow/accounting_system_web:1.0.0 
+call docker build -t atkseegow/accounting_system_web:1.0.1 .
+call docker push atkseegow/accounting_system_web:1.0.1
 
-call docker tag atkseegow/accounting_system_web:1.0.0 atkseegow/accounting_system_web:latest 
+call docker tag atkseegow/accounting_system_web:1.0.1 atkseegow/accounting_system_web:latest 
 call docker push atkseegow/accounting_system_web:latest
