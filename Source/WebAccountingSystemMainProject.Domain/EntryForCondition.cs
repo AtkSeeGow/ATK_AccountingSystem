@@ -22,6 +22,18 @@ namespace WebAccountingSystemMainProject.Domain
         /// 查詢結果是否對日
         /// </summary>
         [DataMember]
-        public bool EntryIsByDate { get; set; }
+        public bool EntryIsByDay { get; set; }
+
+        /// <summary>
+        /// 查詢結果是否對月
+        /// </summary>
+        [DataMember]
+        public bool EntryIsByMonth { get; set; }
+
+        /// <summary>
+        /// 查詢結果是否對年
+        /// </summary>
+        [DataMember]
+        public bool EntryIsByYear { get; set; }
     }
 }

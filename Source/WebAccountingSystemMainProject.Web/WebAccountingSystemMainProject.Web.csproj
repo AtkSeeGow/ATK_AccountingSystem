@@ -34,6 +34,9 @@
     <Content Update="Views\GeneralJournal\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\GeneralGraph\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\GeneralLedger\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

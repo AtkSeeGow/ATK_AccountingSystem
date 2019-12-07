@@ -56,8 +56,10 @@ export class Entry {
 export class EntryForCondition extends Entry {
     entryTradingDayBegin: any = null;
     entryTradingDayEnd: any = null;
-    entryIsByDate: boolean = false;
-
+    entryIsByDay: boolean = false;
+    entryIsByMonth: boolean = false;
+    entryIsByYear: boolean = false;
+    
     clone(): EntryForCondition {
         var result = new EntryForCondition();
 
@@ -67,11 +69,13 @@ export class EntryForCondition extends Entry {
 
         if (this.entryTradingDayBegin)
             result.entryTradingDayBegin = new Date(this.entryTradingDayBegin.date.year, this.entryTradingDayBegin.date.month - 1, this.entryTradingDayBegin.date.day);
-        
+
         if (this.entryTradingDayEnd)
             result.entryTradingDayEnd = new Date(this.entryTradingDayEnd.date.year, this.entryTradingDayEnd.date.month - 1, this.entryTradingDayEnd.date.day);
 
-        result.entryIsByDate = this.entryIsByDate;
+        result.entryIsByDay = this.entryIsByDay;
+        result.entryIsByMonth = this.entryIsByMonth;
+        result.entryIsByYear = this.entryIsByYear;
 
         return result;
     }

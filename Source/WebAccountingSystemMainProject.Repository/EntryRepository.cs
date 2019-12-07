@@ -118,7 +118,7 @@ namespace WebAccountingSystemMainProject.Repository
             if (!string.IsNullOrEmpty(entryForCondition.EntrySummary))
                 filter = filter & builder.Where(item => item.EntrySummary.Contains(entryForCondition.EntrySummary));
             
-            if(entryForCondition.EntryIsByDate)
+            if(entryForCondition.EntryIsByDay)
             {
                 var hashSet = new HashSet<DateTime?>();
                 this.TEntityCollection.Find(filter).ForEachAsync(item => hashSet.Add(item.EntryTradingDay)).Wait();

@@ -9,7 +9,7 @@ import { GeneralLedgerService } from './generalLedger.service';
 import { AutocompleteUtilityModel } from '../utilities/autocompleteUtility/autocompleteUtility.model'
 import { ModalUtilityModel, Button } from '../utilities/modalUtility/modalUtility.model'
 
-import { AccountingSubjectType, AccountingSubjectTypeUtility } from '../utilities/accountingSubjectUtility.component'
+import { AccountingSubjectTypeUtility } from '../utilities/accountingSubjectUtility.component'
 import { HttpErrorResponseUtility, DatePickerUtility } from '../utilities/commonUtility.component'
 import { EntryType, EntryForCondition } from '../utilities/entryUtility.component'
 
@@ -32,8 +32,6 @@ declare const $: any;
 
     ledgers: any[] = [];
 
-    confirmMessageModal: ModalUtilityModel = GeneralLedgerUtility.GetConfirmMessageModal(function () { this.filter(true); this.confirmMessageModal.hide(); }.bind(this));
-    completeMessageModal: ModalUtilityModel = GeneralLedgerUtility.GetCompleteMessageModal();
     errorMessageModal: ModalUtilityModel = new ModalUtilityModel();
 
     totalAmount: TotalAmount = new TotalAmount();

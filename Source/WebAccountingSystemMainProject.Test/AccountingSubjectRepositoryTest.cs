@@ -11,7 +11,7 @@ namespace WebAccountingSystemMainProject.Test
 
         private readonly MongoDBOptions mongoDBOptions = new MongoDBOptions()
         {
-            ConnectionString = "mongodb://Ubuntu-1804.mshome.net:27017/",
+            ConnectionString = "mongodb://localhost:27017/",
             CollectionName = "ATK_AccountingSystem"
         };
 

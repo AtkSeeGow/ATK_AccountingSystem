@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace WebAccountingSystemMainProject.Domain.Enum
 {
     /// <summary>
-    /// 科目科目類型
+    /// 會計科目類型
     /// </summary>
     public enum AccountingSubjectType
     {
