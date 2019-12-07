@@ -1,6 +1,6 @@
 ﻿<div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">General Journal</h1>
+        <h1 class="page-header">General Graph</h1>
     </div>
 </div>
 
@@ -21,7 +21,7 @@
                     <div class="col-lg-4">
                         <div class="form-group">
                             <label for="entryAccountingSubject" class="text-info">Accounting Subject:</label>
-                            <autocompleteUtilityComponent  [autocompleteUtilityModel]="accountingSubjectAutocompleteUtilityModel"></autocompleteUtilityComponent>
+                            <autocompleteUtilityComponent [autocompleteUtilityModel]="accountingSubjectAutocompleteUtilityModel"></autocompleteUtilityComponent>
                         </div>
                     </div>﻿
                     <div class="col-lg-3">
@@ -47,13 +47,16 @@
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input name="isByDay" [(ngModel)]="conditionForView.entryIsByDay" type="checkbox" (ngModelChange)="conditionForView.entryIsByDate=$event?true:false">Is By Date
+                                <input name="isByMonth" type="checkbox" [(ngModel)]="conditionForView.entryIsByMonth" (ngModelChange)="change('isByMonth', $event)">Is By Date
+                            </label>
+                            <label>
+                                <input name="isByYear" type="checkbox" [(ngModel)]="conditionForView.entryIsByYear"  (ngModelChange)="change('isByYear', $event)">Is By Year
                             </label>
                         </div>
                     </div>﻿
                     <div class="col-lg-2" style="text-align: center;">
                         <div class="form-group">
-                            <br/>
+                            <br />
                             <button (click)="filter(false)" type="submit" class="btn btn-default">Filter</button>
                             <button (click)="clear()" type="reset" class="btn btn-default">Clear</button>
                         </div>
@@ -68,30 +71,52 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <p></p>
+                <p>Assets</p>
             </div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group" style="text-align:right">
-                            <button (click)="save()" type="submit" class="btn btn-default">Save</button>
-                        </div>
-                        <div class="form-group">
-                            <hot-table [hotId]="handsontableId"
-                                       [settings]="handsontableGridSettings"
-                                       [data]="entrys">
-                            </hot-table>
-                        </div>
-                        <div class="form-group" style="text-align:right">
-                            <button (click)="save()" type="submit" class="btn btn-default">Save</button>
-                        </div>
-                    </div>
-                </div>
+                <div id="assets-container"></div>
             </div>
         </div>
     </div>
 </div>
 
-<modalUtilityComponent [modalUtilityModel]="confirmMessageModal"></modalUtilityComponent>
-<modalUtilityComponent [modalUtilityModel]="completeMessageModal"></modalUtilityComponent>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p>Liabilities</p>
+            </div>
+            <div class="panel-body">
+                <div id="liabilities-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p>Revenues</p>
+            </div>
+            <div class="panel-body">
+                <div id="revenues-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p>Expenses</p>
+            </div>
+            <div class="panel-body">
+                <div id="expenses-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <modalUtilityComponent [modalUtilityModel]="errorMessageModal"></modalUtilityComponent>

@@ -2,9 +2,9 @@
 
 namespace WebAccountingSystemMainProject.Web
 {
-    public class GeneralJournalController : Controller
+    public class GeneralGraphController : Controller
     {
-        public GeneralJournalController()
+        public GeneralGraphController()
         {
         }
 

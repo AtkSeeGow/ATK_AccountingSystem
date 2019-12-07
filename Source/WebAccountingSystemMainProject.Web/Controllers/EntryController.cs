@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using WebAccountingSystemMainProject.Domain;
+using WebAccountingSystemMainProject.Domain.Enum;
 using WebAccountingSystemMainProject.Repository;
 
 namespace WebAccountingSystemMainProject.Web
@@ -64,7 +65,7 @@ namespace WebAccountingSystemMainProject.Web
             var temporary = new Dictionary<string, IList<Entry>>();
 
             var entrys = this.entryRepository.FetchBy(conditionForFilter);
-            foreach(var entry in entrys)
+            foreach (var entry in entrys)
             {
                 if (!temporary.ContainsKey(entry.EntryAccountingSubject))
                     temporary.Add(entry.EntryAccountingSubject, new List<Entry>());
@@ -88,50 +89,65 @@ namespace WebAccountingSystemMainProject.Web
         }
 
         [HttpPost]
+        public Dictionary<AccountingSubjectType, IList<dynamic>> GraphBy([FromBody]EntryForCondition conditionForFilter)
+        {
+            var accountingSubjects = accountingSubjectRepository.FetchAll().Result;
+            var entrys = this.FetchBy(conditionForFilter);
+
+            var result = new Dictionary<AccountingSubjectType, IList<dynamic>>();
+            result.Add(AccountingSubjectType.Assets, new List<dynamic>());
+            result.Add(AccountingSubjectType.Liabilities, new List<dynamic>());
+            result.Add(AccountingSubjectType.Revenues, new List<dynamic>());
+            result.Add(AccountingSubjectType.Expenses, new List<dynamic>());
+
+            var date = conditionForFilter.EntryTradingDayBegin.Value;
+
+            var entryTradingDayBegin = new DateTime(date.Year, date.Month, 1);
+            var entryTradingDayEnd = entryTradingDayBegin.AddMonths(conditionForFilter.EntryIsByYear ? 12 : 1);
+            this.graphBy(AccountingSubjectType.Assets, conditionForFilter.EntryTradingDayBegin.Value, entryTradingDayEnd, entrys, accountingSubjects, result);
+            this.graphBy(AccountingSubjectType.Liabilities, conditionForFilter.EntryTradingDayBegin.Value, entryTradingDayEnd, entrys, accountingSubjects, result);
+            this.graphBy(AccountingSubjectType.Revenues, entryTradingDayBegin, entryTradingDayEnd, entrys, accountingSubjects, result);
+            this.graphBy(AccountingSubjectType.Expenses, entryTradingDayBegin, entryTradingDayEnd, entrys, accountingSubjects, result);
+
+            while (conditionForFilter.EntryTradingDayEnd >= entryTradingDayEnd)
+            {
+                entryTradingDayBegin = entryTradingDayEnd;
+                entryTradingDayEnd = entryTradingDayBegin.AddMonths(conditionForFilter.EntryIsByYear ? 12 : 1);
+                this.graphBy(AccountingSubjectType.Assets, conditionForFilter.EntryTradingDayBegin.Value, entryTradingDayEnd, entrys, accountingSubjects, result);
+                this.graphBy(AccountingSubjectType.Liabilities, conditionForFilter.EntryTradingDayBegin.Value, entryTradingDayEnd, entrys, accountingSubjects, result);
+                this.graphBy(AccountingSubjectType.Revenues, entryTradingDayBegin, entryTradingDayEnd, entrys, accountingSubjects, result);
+                this.graphBy(AccountingSubjectType.Expenses, entryTradingDayBegin, entryTradingDayEnd, entrys, accountingSubjects, result);
+            }
+
+            return result;
+        }
+
+        [HttpPost]
         public ActionResult SaveBy([FromBody]dynamic data)
         {
             var result = new ValidResult();
 
-            EntryForCondition conditionForFilter = JsonConvert.DeserializeObject<EntryForCondition>(JsonConvert.SerializeObject(data.conditionForFilter));
-            List<Entry> entrysFromClient = JsonConvert.DeserializeObject<List<Entry>>(JsonConvert.SerializeObject(data.entrys));
+            EntryForCondition entryForCondition = JsonConvert.DeserializeObject<EntryForCondition>(JsonConvert.SerializeObject(data.conditionForFilter));
+            List<Entry> entrys = JsonConvert.DeserializeObject<List<Entry>>(JsonConvert.SerializeObject(data.entrys));
 
-            var entrysFromEmpty = entrysFromClient.Where(item => item.IsEmptyInstance()).ToList();
-            foreach (var entryFromEmpty in entrysFromEmpty)
-                entrysFromClient.Remove(entryFromEmpty);
-            
-            foreach (var entryFromClient in entrysFromClient)
-                entryFromClient.EntryRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
+            entrys = entrys.Where(item => !item.IsEmptyInstance()).ToList();
 
-            if(entrysFromClient.Any(item => item.EntryType == Domain.Enum.EntryType.None))
-                result.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，借貸方為必填項目..");
+            foreach (var entry in entrys)
+                entry.EntryRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
 
-            if (entrysFromClient.Any(item => item.EntryAmount == 0))
-                result.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，金額欄位不得為零..");
-
-            if(entrysFromClient.Where(item => item.EntryType == Domain.Enum.EntryType.Debits).Sum(item => item.EntryAmount) != 
-               entrysFromClient.Where(item => item.EntryType == Domain.Enum.EntryType.Credits).Sum(item => item.EntryAmount))
-                result.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，借貸金額不平衡..");
-
-            var accountingSubjectCodes = entrysFromClient.Select(item => item.EntryAccountingSubject).ToArray();
-            var accountingSubjects = this.accountingSubjectRepository.FetchBy(accountingSubjectCodes);
-            foreach(var entryFromClient in entrysFromClient)
-            {
-                var accountingSubject = accountingSubjects.FirstOrDefault(item => item.AccountingSubjectCode == entryFromClient.EntryAccountingSubject);
-                if (accountingSubject == null)
-                    result.ErrorMessages.Add(Guid.NewGuid().ToString(), string.Format("驗證出現錯誤，會計科目({0})不存在..", entryFromClient.EntryAccountingSubject));
-            }
+            this.validBy(result, entrys);
 
             if (!result.IsValid)
                 return BadRequest(result);
 
-            var entrysFromDB = this.FetchBy(conditionForFilter);
+            var entrysFromDB = this.FetchBy(entryForCondition);
 
             try
             {
-                entryRepository.Delete(conditionForFilter);
+                entryRepository.Delete(entryForCondition);
 
-                if (entrysFromClient.Count() > 0)
-                    entryRepository.CreateAll(entrysFromClient).Wait();
+                if (entrys.Count() > 0)
+                    entryRepository.CreateAll(entrys).Wait();
             }
             catch (Exception exception)
             {
@@ -141,5 +157,81 @@ namespace WebAccountingSystemMainProject.Web
 
             return Ok(result);
         }
+
+        [HttpPost]
+        public ActionResult InsertBy([FromBody]IEnumerable<Entry> entrys)
+        {
+            var result = new ValidResult();
+
+            entrys = entrys.Where(item => !item.IsEmptyInstance()).ToList();
+
+            this.validBy(result, entrys);
+
+            if (!result.IsValid)
+                return BadRequest(result);
+
+            try
+            {
+                if (entrys.Count() > 0)
+                    entryRepository.CreateAll(entrys).Wait();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return Ok(result);
+        }
+
+        #region Pirvate
+
+        private void validBy(ValidResult validResult, IEnumerable<Entry> entrys)
+        {
+            if (entrys.Any(item => item.EntryType == Domain.Enum.EntryType.None))
+                validResult.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，借貸方為必填項目..");
+
+            if (entrys.Any(item => item.EntryAmount == 0))
+                validResult.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，金額欄位不得為零..");
+
+            if (entrys.Where(item => item.EntryType == Domain.Enum.EntryType.Debits).Sum(item => item.EntryAmount) !=
+                entrys.Where(item => item.EntryType == Domain.Enum.EntryType.Credits).Sum(item => item.EntryAmount))
+                validResult.ErrorMessages.Add(Guid.NewGuid().ToString(), "驗證出現錯誤，借貸金額不平衡..");
+
+            var accountingSubjectCodes = entrys.Select(item => item.EntryAccountingSubject).ToArray();
+            var accountingSubjects = this.accountingSubjectRepository.FetchBy(accountingSubjectCodes);
+            foreach (var entryFromClient in entrys)
+            {
+                var accountingSubject = accountingSubjects.FirstOrDefault(item => item.AccountingSubjectCode == entryFromClient.EntryAccountingSubject);
+                if (accountingSubject == null)
+                    validResult.ErrorMessages.Add(Guid.NewGuid().ToString(), string.Format("驗證出現錯誤，會計科目({0})不存在..", entryFromClient.EntryAccountingSubject));
+            }
+        }
+        
+        private void graphBy(
+            AccountingSubjectType accountingSubjectType,
+            DateTime entryTradingDayBegin,
+            DateTime entryTradingDayEnd,
+            IEnumerable<Entry> entrys,
+            IEnumerable<AccountingSubject> accountingSubjects,
+            Dictionary<AccountingSubjectType, IList<dynamic>> dictionary)
+        {
+            var accountingSubjectByFiter = accountingSubjects.Where(item => item.AccountingSubjectType == accountingSubjectType).ToList();
+
+            var debitsSum = entrys.Where(item =>
+                item.EntryType == EntryType.Debits &&
+                accountingSubjectByFiter.Any(ii => item.EntryAccountingSubject.Contains(ii.AccountingSubjectCode)) &&
+                item.EntryTradingDay >= entryTradingDayBegin &&
+                item.EntryTradingDay < entryTradingDayEnd).Sum(item => item.EntryAmount);
+
+            var creditsSum = entrys.Where(item =>
+                item.EntryType == EntryType.Credits &&
+                accountingSubjectByFiter.Any(ii => item.EntryAccountingSubject.Contains(ii.AccountingSubjectCode)) &&
+                item.EntryTradingDay >= entryTradingDayBegin &&
+                item.EntryTradingDay < entryTradingDayEnd).Sum(item => item.EntryAmount);
+
+            dictionary[accountingSubjectType].Add(new { date = entryTradingDayEnd, value = debitsSum - creditsSum });
+        }
+
+        #endregion
     }
 }

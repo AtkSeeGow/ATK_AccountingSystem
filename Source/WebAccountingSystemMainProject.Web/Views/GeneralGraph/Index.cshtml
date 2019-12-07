@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "General Graph Page";
+}
+
+<style>
+    .mydp .selector {
+        z-index: 999
+    }
+</style>
+
+<generalGraphComponent></generalGraphComponent>
+
+<script>
+    System.import('@Url.Content("~")/app/generalGraph/main').catch(function (err) { console.error(err); });
+</script>
