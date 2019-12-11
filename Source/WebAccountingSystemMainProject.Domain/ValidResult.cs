@@ -27,6 +27,22 @@ namespace WebAccountingSystemMainProject.Domain
         /// <summary>
         /// 驗證錯誤訊息
         /// </summary>
+        public Dictionary<string, string> SuccessMessages
+        {
+            get
+            {
+                if (successMessages == null)
+                    this.successMessages = new Dictionary<string, string>();
+                return this.successMessages;
+            }
+        }
+
+        [DataMember]
+        private Dictionary<string, string> successMessages;
+
+        /// <summary>
+        /// 驗證錯誤訊息
+        /// </summary>
         public Dictionary<string, string> ErrorMessages
         {
             get
@@ -45,6 +61,7 @@ namespace WebAccountingSystemMainProject.Domain
         {
             var x = this.IsValid;
             var y = this.ErrorMessages;
+            var z = this.SuccessMessages;
         }
     }
 

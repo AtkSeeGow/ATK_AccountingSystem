@@ -3,8 +3,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using WebAccountingSystemMainProject.Domain;
 using WebAccountingSystemMainProject.Domain.Enum;
 using WebAccountingSystemMainProject.Repository;
@@ -164,21 +166,74 @@ namespace WebAccountingSystemMainProject.Web
             var result = new ValidResult();
 
             entrys = entrys.Where(item => !item.IsEmptyInstance()).ToList();
+            foreach (var entry in entrys)
+                entry.EntryRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
 
-            this.validBy(result, entrys);
+            this.insertBy(result, entrys);
+
+            if (!result.IsValid)
+                return BadRequest(result);
+            else
+                return Ok(result);
+        }
+
+        [HttpPost]
+        public ActionResult InvoiceBy([FromBody] dynamic data)
+        {
+            var result = new ValidResult();
+
+            string invoiceInformation = JsonConvert.DeserializeObject<string>(JsonConvert.SerializeObject(data.invoiceInformation));
+            string entryRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
+
+            if (!invoiceInformation.Substring(77, 1).Equals(":"))
+            {
+                result.ErrorMessages.Add(Guid.NewGuid().ToString(), "電子發票證明聯二維條碼資料結構異常");
+                return BadRequest(result);
+            }
+
+            if(entryRepository.FetchAll(item => item.EntrySummary == invoiceInformation).Result.Count() > 0)
+                result.ErrorMessages.Add(Guid.NewGuid().ToString(), "電子發票證明聯二維條碼資料已被記錄");
 
             if (!result.IsValid)
                 return BadRequest(result);
 
-            try
+            var entryAmount = Convert.ToInt32(invoiceInformation.Substring(29, 8), 16);
+
+            var culture = new CultureInfo("zh-TW");
+            culture.DateTimeFormat.Calendar = new TaiwanCalendar();
+            var entryTradingDay = DateTime.Parse($"{invoiceInformation.Substring(10, 3)}/{invoiceInformation.Substring(13, 2)}/{invoiceInformation.Substring(15, 2)}", culture);
+
+            var entrys = new List<Entry>();
+            entrys.Add(new Entry()
             {
-                if (entrys.Count() > 0)
-                    entryRepository.CreateAll(entrys).Wait();
-            }
-            catch (Exception exception)
+                EntryBookName = "INVOICE",
+                EntryAccountingSubject = "520401",
+                EntryTradingDay = entryTradingDay,
+                EntryRecorder = entryRecorder,
+                EntryType = EntryType.Debits,
+                EntrySummary = invoiceInformation,
+                EntryAmount = entryAmount
+            });
+            entrys.Add(new Entry()
             {
-                throw exception;
-            }
+                EntryBookName = "INVOICE",
+                EntryAccountingSubject = "110101",
+                EntryTradingDay = entryTradingDay,
+                EntryRecorder = entryRecorder,
+                EntryType = EntryType.Credits,
+                EntrySummary = invoiceInformation,
+                EntryAmount = entryAmount
+            });
+
+            this.insertBy(result, entrys);
+            if(!result.IsValid)
+                return BadRequest(result);
+
+            result.SuccessMessages.Add(Guid.NewGuid().ToString() ,
+                $"分錄完成\n" +
+                $"發票號碼：{invoiceInformation.Substring(0, 10)}\n" +
+                $"使用者：{entryRecorder}\n" +
+                $"交易日：{entryTradingDay.ToString("yyyy/MM/dd")}");
 
             return Ok(result);
         }
@@ -207,6 +262,26 @@ namespace WebAccountingSystemMainProject.Web
             }
         }
         
+        private ValidResult insertBy(ValidResult validResult, IEnumerable<Entry> entrys)
+        {
+            this.validBy(validResult, entrys);
+
+            if (!validResult.IsValid)
+                return validResult;
+
+            try
+            {
+                if (entrys.Count() > 0)
+                    entryRepository.CreateAll(entrys).Wait();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return validResult;
+        }
+
         private void graphBy(
             AccountingSubjectType accountingSubjectType,
             DateTime entryTradingDayBegin,
