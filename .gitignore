@@ -43,4 +43,4 @@ node_modules/
 !**/app/lib.builder.js
 !**/app/systemjs.config.js
 
-Source/WebAccountingSystemMainProject\.Web/wwwroot/app/package-lock\.json
+Source/AccountingSystem\.Web/wwwroot/app/package-lock\.json
