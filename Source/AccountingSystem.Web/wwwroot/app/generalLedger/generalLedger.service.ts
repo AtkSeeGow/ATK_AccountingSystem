@@ -26,6 +26,6 @@ export class GeneralLedgerService {
         if (conditionForFilter.entryTradingDayEnd && conditionForFilter.entryTradingDayEnd != '')
             conditionForFilter.entryTradingDayEnd = new Date(conditionForFilter.entryTradingDayEnd);
 
-        return this.http.post<any>('Entry/LedgerBy', conditionForFilter);
+        return this.http.post<any>('Detail/LedgerBy', conditionForFilter);
     };
 }

@@ -14,12 +14,6 @@ export class MaintenanceAccountingSubjectUtility {
         return result;
     }
 
-    static GetCompleteMessageModal() {
-        var result = new ModalUtilityModel();
-        result.title = "儲存完成";
-        return result;
-    }
-
     static GetGridSettings(component: any): Handsontable.GridSettings{
         return {
             colHeaders: true,
@@ -36,23 +30,23 @@ export class MaintenanceAccountingSubjectUtility {
             }.bind(component),
             columns: [
                 {
-                    data: "accountingSubjectType",
+                    data: "type",
                     width: 150,
-                    title:"Type",
+                    title:"類型",
                     type: 'dropdown',
                     source: ['Assets', 'Liabilities', 'OwnerEquity', 'Revenues', 'Expenses']
                 },
                 {
-                    data: "accountingSubjectCode",
-                    title: "Code"
+                    data: "code",
+                    title: "代號"
                 },
                 {
-                    data: "accountingSubjectName",
-                    title: "Name"
+                    data: "name",
+                    title: "名稱"
                 },
                 {
-                    data: "accountingSubjectDescription",
-                    title: "Description"
+                    data: "description",
+                    title: "描述"
                 }],
             stretchH: 'last'
         };

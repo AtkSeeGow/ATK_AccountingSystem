@@ -9,23 +9,23 @@ export class MaintenanceBookService {
         private http: HttpClient
     ) { };
 
-    asyncSelectBookNameBy(query: any) {
+    asyncSelectNameBy(query: any) {
         return this.http.get<any>('Book/SelectNameBy?query=' + query);
     }
 
-    asyncFetchBookBy(conditionForFilter: any) {
+    asyncFetchBy(conditionForFilter: any) {
         return this.http.post<any>('Book/FetchBy', conditionForFilter);
     };
 
-    asyncSaveBookBy(conditionForFilter: any, booksForView: Book[]) {
-        let entrys: any[] = [];
+    asyncSaveBy(conditionForFilter: any, booksForView: Book[]) {
+        let books: any[] = [];
         booksForView.forEach(function (value: any, index: number, array: any[]) {
             if (value.isEdit != undefined) {
-                let entry: any = Book.Clone(value);
-                entry.id = "00000000-0000-0000-0000-000000000000";
-                entrys.push(entry);
+                let book: any = Book.Clone(value);
+                book.id = "00000000-0000-0000-0000-000000000000";
+                books.push(book);
             }
         });
-        return this.http.post<any>('Book/SaveBy', { conditionForFilter: conditionForFilter, books: entrys });
+        return this.http.post<any>('Book/SaveBy', { conditionForFilter: conditionForFilter, books: books });
     };
 }

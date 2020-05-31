@@ -25,10 +25,10 @@ namespace AccountingSystem.Test
         {
             var accountingSubject = new AccountingSubject()
             {
-                AccountingSubjectType = Domain.Enum.AccountingSubjectType.Assets,
-                AccountingSubjectCode = "1101",
-                AccountingSubjectName = "現金",
-                AccountingSubjectDescription = "凡庫存現金、銀行存款、匯撥中現金、零用金及週轉金、庫存外幣等屬之，但不包括已指定用途，或有法律、契約上之限制者。",
+                Type = Domain.Enum.AccountingSubjectType.Assets,
+                Code = "1101",
+                Name = "現金",
+                Description = "凡庫存現金、銀行存款、匯撥中現金、零用金及週轉金、庫存外幣等屬之，但不包括已指定用途，或有法律、契約上之限制者。",
             };
             this.accountingSubjectRepository.Create(accountingSubject).Wait();
         }

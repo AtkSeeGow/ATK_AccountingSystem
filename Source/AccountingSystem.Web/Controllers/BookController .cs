@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AccountingSystem.Domain;
+using AccountingSystem.Repository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using AccountingSystem.Domain;
-using AccountingSystem.Repository;
 
 namespace AccountingSystem.Web
 {
@@ -14,16 +14,16 @@ namespace AccountingSystem.Web
     {
         private readonly ILogger logger;
         private readonly BookRepository bookRepository;
-        private readonly EntryRepository entryRepository;
+        private readonly DetailRepository detailRepository;
 
         public BookController(
             ILogger<BookController> logger,
             BookRepository bookRepository,
-            EntryRepository entryRepository)
+            DetailRepository detailRepository)
         {
             this.logger = logger;
             this.bookRepository = bookRepository;
-            this.entryRepository = entryRepository;
+            this.detailRepository = detailRepository;
         }
 
         [HttpGet]
@@ -31,15 +31,15 @@ namespace AccountingSystem.Web
         {
             var accountId = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
 
-            var entryForCondition = new EntryForCondition();
-            entryForCondition.EntryRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
-            entryForCondition.EntryBookName = query;
+            var condition = new Detail();
+            condition.Recorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
+            condition.Name = query;
 
-            var result = this.entryRepository.GroupEntryBookNameBy(entryForCondition).ToHashSet();
+            var result = this.detailRepository.GroupNameBy(condition).ToHashSet();
 
-            var books = this.bookRepository.FetchBy(accountId).Where(item => item.BookName.Contains(entryForCondition.EntryBookName));
+            var books = this.bookRepository.FetchBy(accountId).Where(item => item.Name.Contains(condition.Name));
             foreach (var book in books)
-                result.Add(book.BookName);
+                result.Add(book.Name);
 
             return result;
         }
@@ -47,7 +47,7 @@ namespace AccountingSystem.Web
         [HttpPost]
         public IEnumerable<Book> FetchBy([FromBody]Book conditionForFilter)
         {
-            conditionForFilter.BookRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
+            conditionForFilter.Recorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
             return this.bookRepository.FetchBy(conditionForFilter);
         }
 
@@ -56,31 +56,31 @@ namespace AccountingSystem.Web
         {
             var result = new ValidResult();
 
-            Book conditionForFilter = JsonConvert.DeserializeObject<Book>(JsonConvert.SerializeObject(data.conditionForFilter));
-            List<Book> booksFromClient = JsonConvert.DeserializeObject<List<Book>>(JsonConvert.SerializeObject(data.books));
+            Book condition = JsonConvert.DeserializeObject<Book>(JsonConvert.SerializeObject(data.conditionForFilter));
+            List<Book> clientBooks = JsonConvert.DeserializeObject<List<Book>>(JsonConvert.SerializeObject(data.books));
 
-            var booksFromEmpty = booksFromClient.Where(item => item.IsEmptyInstance()).ToList();
-            foreach (var bookFromEmpty in booksFromEmpty)
-                booksFromClient.Remove(bookFromEmpty);
+            var emptyBooks = clientBooks.Where(item => item.IsEmptyInstance()).ToList();
+            foreach (var bookFromEmpty in emptyBooks)
+                clientBooks.Remove(bookFromEmpty);
 
-            foreach (var bookFromClient in booksFromClient)
-                bookFromClient.BookRecorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
+            foreach (var clientBook in clientBooks)
+                clientBook.Recorder = HttpContext.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name).Value;
 
             if (!result.IsValid)
                 return BadRequest(result);
 
-            var booksFromDB = this.FetchBy(conditionForFilter);
+            var dataBaseBooks = this.FetchBy(condition);
 
             try
             {
-                bookRepository.Delete(conditionForFilter);
+                bookRepository.Delete(condition);
 
-                if (booksFromClient.Count() > 0)
-                    bookRepository.CreateAll(booksFromClient).Wait();
+                if (clientBooks.Count() > 0)
+                    bookRepository.CreateAll(clientBooks).Wait();
             }
             catch (Exception exception)
             {
-                logger.LogError(JsonConvert.SerializeObject(booksFromDB));
+                logger.LogError(JsonConvert.SerializeObject(dataBaseBooks));
                 throw exception;
             }
 

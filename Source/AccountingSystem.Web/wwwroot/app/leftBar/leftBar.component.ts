@@ -18,6 +18,5 @@ export class LeftBarComponent {
     };
 
     ngAfterViewInit() {
-        $('#side-menu').metisMenu();
     }
 }

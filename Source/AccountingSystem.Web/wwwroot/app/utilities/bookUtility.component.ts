@@ -1,15 +1,17 @@
-﻿export class Book {
-    bookName: string = "";
-    bookReader: string = "";
-    bookRecorder: string = "";
+﻿import { AutocompleteUtilityModel } from '../utilities/autocompleteUtility/autocompleteUtility.model'
+
+export class Book {
+    name: string = "";
+    reader: string = "";
+    recorder: string = "";
 
     isEdit: boolean = false;
 
     static Clone(entry: any): Book {
-        var result = new Book();
-        result.bookName = entry.bookName;
-        result.bookReader = entry.bookReader;
-        result.bookRecorder = entry.bookRecorder;
+        const result = new Book();
+        result.name = entry.name;
+        result.reader = entry.reader;
+        result.recorder = entry.recorder;
         result.isEdit = entry.isEdit;
         return result;
     }

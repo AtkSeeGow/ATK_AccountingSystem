@@ -4,7 +4,7 @@ import * as Handsontable from 'handsontable';
 
 import { MaintenanceAccountingSubjectUtility } from './maintenanceAccountingSubject.domain';
 import { MaintenanceAccountingSubjectService } from './maintenanceAccountingSubject.service';
-import { ModalUtilityModel, Button } from '../utilities/modalUtility/modalUtility.model'
+import { ModalUtilityModel } from '../utilities/modalUtility/modalUtility.model'
 import { AccountingSubjectTypeUtility, AccountingSubject } from '../utilities/accountingSubjectUtility.component'
 import { HttpErrorResponseUtility } from '../utilities/commonUtility.component'
 
@@ -25,8 +25,6 @@ export class MaintenanceAccountingSubjectComponent {
     accountingSubjects: AccountingSubject[] = [];
 
     confirmMessageModal: ModalUtilityModel = MaintenanceAccountingSubjectUtility.GetConfirmMessageModal(function () { this.filter(true); this.confirmMessageModal.hide(); }.bind(this));
-    completeMessageModal: ModalUtilityModel = MaintenanceAccountingSubjectUtility.GetCompleteMessageModal();
-    errorMessageModal: ModalUtilityModel = new ModalUtilityModel();
 
     constructor(private maintenanceAccountingSubjectService: MaintenanceAccountingSubjectService) {
         this.filter(true);
@@ -44,15 +42,15 @@ export class MaintenanceAccountingSubjectComponent {
 
         this.conditionForFilter = AccountingSubject.Clone(this.conditionForView);
 
-        $.blockUI();
-        this.maintenanceAccountingSubjectService.asyncFetchAccountingSubjectBy(this.conditionForFilter).subscribe(httpResponse => {
-            $.unblockUI();
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+        this.maintenanceAccountingSubjectService.asyncFetchBy(this.conditionForFilter).subscribe(httpResponse => {
+            notify.close();
             component.accountingSubjects = httpResponse;
             component.accountingSubjects.forEach(function (value: AccountingSubject, index: number, array: any[]) {
-                value.accountingSubjectType = AccountingSubjectTypeUtility.ToString(value.accountingSubjectType);
+                value.type = AccountingSubjectTypeUtility.ToString(value.type);
                 value.isEdit = false;
             });
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     clear() {
@@ -62,11 +60,10 @@ export class MaintenanceAccountingSubjectComponent {
     save() {
         var component = this;
 
-        $.blockUI();
-        this.maintenanceAccountingSubjectService.asyncSaveAccountingSubjectBy(this.conditionForFilter, this.accountingSubjects).subscribe(httpResponse => {
-            $.unblockUI();
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+        this.maintenanceAccountingSubjectService.asyncSaveBy(this.conditionForFilter, this.accountingSubjects).subscribe(httpResponse => {
+            notify.close();
             this.filter(true);
-            this.completeMessageModal.show();
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 }

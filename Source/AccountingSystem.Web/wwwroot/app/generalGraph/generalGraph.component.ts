@@ -1,7 +1,6 @@
 ﻿import { Component, AfterViewInit, ChangeDetectorRef, ViewChild, AfterViewChecked } from '@angular/core';
 
 import * as moment from 'moment';
-import * as numeral from 'numeral';
 
 import { GeneralGraphUtility } from './generalGraph.domain';
 import { GeneralGraphService } from './generalGraph.service';
@@ -11,7 +10,9 @@ import { ModalUtilityModel } from '../utilities/modalUtility/modalUtility.model'
 
 import { AccountingSubjectTypeUtility } from '../utilities/accountingSubjectUtility.component'
 import { HttpErrorResponseUtility, DatePickerUtility } from '../utilities/commonUtility.component'
-import { EntryType, EntryForCondition } from '../utilities/entryUtility.component'
+import { EntryType } from '../utilities/entryUtility.component'
+
+import { Condition } from '../utilities/conditionUtility.component'
 
 declare const $: any;
 declare const Morris: any;
@@ -25,8 +26,7 @@ declare const Morris: any;
     DatePickerUtility = DatePickerUtility;
     EntryType = EntryType;
 
-    conditionForFilter: EntryForCondition = new EntryForCondition();
-    conditionForView: EntryForCondition = new EntryForCondition();
+    conditionForView: Condition = new Condition();
 
     accountingSubjectAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralGraphUtility.GetAccountingSubjectAutocompleteUtilityModel(this);
     bookNameAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralGraphUtility.GetBookNameAutocompleteUtilityModel(this);
@@ -47,30 +47,20 @@ declare const Morris: any;
         this.filter();
     };
 
-    change(name: string, value: any) {
-        if (name == 'isByMonth') {
-            this.conditionForView.entryIsByMonth = value;
-            this.conditionForView.entryIsByYear = !value;
-        }
-            
-        if (name == 'isByYear') {
-            this.conditionForView.entryIsByYear = value;
-            this.conditionForView.entryIsByMonth = !value;
-        }  
-    }
-
     filter() {
         var component = this;
-        this.conditionForFilter = this.conditionForView.clone();
 
-        $.blockUI();
-        this.generalGraphService.asyncGraphEntryBy(this.conditionForFilter).subscribe(httpResponse => {
-            $.unblockUI();
+        const condition = this.conditionForView.clone();
 
-            var assets = httpResponse.Assets;
-            var liabilities = httpResponse.Liabilities;
-            var revenues = httpResponse.Revenues;
-            var expenses = httpResponse.Expenses;
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+
+        this.generalGraphService.asyncGraphEntryBy(condition).subscribe(httpResponse => {
+            notify.close();
+
+            const assets = httpResponse.Assets;
+            const liabilities = httpResponse.Liabilities;
+            const revenues = httpResponse.Revenues;
+            const expenses = httpResponse.Expenses;
 
             $('#assets-container').html('');
             new Morris.Line({
@@ -108,17 +98,16 @@ declare const Morris: any;
                 labels: ['value']
             });
 
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     clear() {
-        this.conditionForView = new EntryForCondition();
-        this.conditionForView.entryIsByMonth = true;
+        this.conditionForView = new Condition();
 
-        var entryTradingDayBegin = moment().add(-3, 'M');
-        this.conditionForView.entryTradingDayBegin = { date: { year: entryTradingDayBegin.year(), month: entryTradingDayBegin.month() + 1, day: entryTradingDayBegin.date() } };
+        const tradingDayBegin = moment().add(-3, 'M');
+        this.conditionForView.tradingDayBegin = { date: { year: tradingDayBegin.year(), month: tradingDayBegin.month() + 1, day: tradingDayBegin.date() } };
 
-        var entryTradingDayEnd = moment();
-        this.conditionForView.entryTradingDayEnd = { date: { year: entryTradingDayEnd.year(), month: entryTradingDayEnd.month() + 1, day: entryTradingDayEnd.date() } };
+        const tradingDayEnd = moment();
+        this.conditionForView.tradingDayEnd = { date: { year: tradingDayEnd.year(), month: tradingDayEnd.month() + 1, day: tradingDayEnd.date() } };
     }
 }

@@ -12,27 +12,27 @@ namespace AccountingSystem.Domain
         /// 日記簿名稱
         /// </summary>
         [DataMember]
-        public string BookName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 讀取人
         /// </summary>
         [DataMember]
-        public string BookReader { get; set; }
+        public string Reader { get; set; }
 
         /// <summary>
         /// 記錄人
         /// </summary>
         [DataMember]
-        public string BookRecorder { get; set; }
+        public string Recorder { get; set; }
 
         #region Public
 
         public bool IsEmptyInstance()
         {
             return
-                string.IsNullOrEmpty(this.BookName) &&
-                string.IsNullOrEmpty(this.BookReader);
+                string.IsNullOrEmpty(this.Name) &&
+                string.IsNullOrEmpty(this.Reader);
         }
 
         #endregion

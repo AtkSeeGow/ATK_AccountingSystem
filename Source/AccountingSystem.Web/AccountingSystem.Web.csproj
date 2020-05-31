@@ -8,6 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\assets\.gitkeep" />
+    <None Include="wwwroot\assets\css\black-dashboard.css.map" />
+    <None Include="wwwroot\assets\fonts\nucleo.woff2" />
+    <None Include="wwwroot\assets\js\black-dashboard.js" />
+    <None Include="wwwroot\assets\js\black-dashboard.js.map" />
+    <None Include="wwwroot\assets\js\black-dashboard.min.js" />
+    <None Include="wwwroot\assets\js\core\bootstrap.min.js" />
+    <None Include="wwwroot\assets\js\core\jquery.min.js" />
+    <None Include="wwwroot\assets\js\core\popper.min.js" />
+    <None Include="wwwroot\assets\js\plugins\bootstrap-notify.js" />
+    <None Include="wwwroot\assets\js\plugins\perfect-scrollbar.jquery.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
@@ -18,13 +32,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AccountingSystem.Repository\AccountingSystem.Repository.csproj" />
     <ProjectReference Include="..\AccountingSystem.Service\AccountingSystem.Service.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\app\utilities\bookUtility.component.ts" />
-    <TypeScriptCompile Include="wwwroot\app\utilities\entryUtility.component.ts" />
-    <TypeScriptCompile Include="wwwroot\app\utilities\accountingSubjectUtility.component.ts" />
-    <TypeScriptCompile Include="wwwroot\app\utilities\commonUtility.component.ts" />
   </ItemGroup>
 
   <ItemGroup>

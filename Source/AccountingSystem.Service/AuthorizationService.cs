@@ -1,12 +1,12 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using AccountingSystem.Domain.Options;
+using AccountingSystem.Repository;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.DirectoryServices.AccountManagement;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using AccountingSystem.Domain.Options;
-using AccountingSystem.Repository;
 
 namespace AccountingSystem.Service
 {

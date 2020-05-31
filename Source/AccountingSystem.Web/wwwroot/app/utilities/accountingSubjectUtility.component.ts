@@ -47,19 +47,19 @@ export class AccountingSubjectTypeUtility {
 }
 
 export class AccountingSubject {
-    accountingSubjectType: any = "";
-    accountingSubjectCode: string = "";
-    accountingSubjectName: string = "";
-    accountingSubjectDescription: string = "";
+    type: any = "";
+    code: string = "";
+    name: string = "";
+    description: string = "";
 
     isEdit: boolean = false;
 
     static Clone(accountingSubject: any): AccountingSubject {
         var result = new AccountingSubject();
-        result.accountingSubjectType = accountingSubject.accountingSubjectType;
-        result.accountingSubjectCode = accountingSubject.accountingSubjectCode;
-        result.accountingSubjectName = accountingSubject.accountingSubjectName;
-        result.accountingSubjectDescription = accountingSubject.accountingSubjectDescription;
+        result.type = accountingSubject.type;
+        result.code = accountingSubject.code;
+        result.name = accountingSubject.name;
+        result.description = accountingSubject.description;
         result.isEdit = accountingSubject.isEdit;
         return result;
     }

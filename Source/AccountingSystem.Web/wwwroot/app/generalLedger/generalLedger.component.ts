@@ -7,11 +7,13 @@ import { GeneralLedgerUtility, TotalAmount } from './generalLedger.domain';
 import { GeneralLedgerService } from './generalLedger.service';
 
 import { AutocompleteUtilityModel } from '../utilities/autocompleteUtility/autocompleteUtility.model'
-import { ModalUtilityModel, Button } from '../utilities/modalUtility/modalUtility.model'
+import { ModalUtilityModel } from '../utilities/modalUtility/modalUtility.model'
 
 import { AccountingSubjectTypeUtility } from '../utilities/accountingSubjectUtility.component'
 import { HttpErrorResponseUtility, DatePickerUtility } from '../utilities/commonUtility.component'
-import { EntryType, EntryForCondition } from '../utilities/entryUtility.component'
+import { EntryType } from '../utilities/entryUtility.component'
+
+import { Condition } from '../utilities/conditionUtility.component'
 
 declare const $: any;
 
@@ -24,8 +26,7 @@ declare const $: any;
     DatePickerUtility = DatePickerUtility;
     EntryType = EntryType;
 
-    conditionForFilter: EntryForCondition = new EntryForCondition();
-    conditionForView: EntryForCondition = new EntryForCondition();
+    conditionForView: Condition = new Condition();
 
     accountingSubjectAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralLedgerUtility.GetAccountingSubjectAutocompleteUtilityModel(this);
     bookNameAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralLedgerUtility.GetBookNameAutocompleteUtilityModel(this);
@@ -51,35 +52,37 @@ declare const $: any;
     };
 
     filter() {
-        var component = this;
-        this.conditionForFilter = this.conditionForView.clone();
+        const component = this;
 
-        $.blockUI();
-        this.generalLedgerService.asyncLedgerEntryBy(this.conditionForFilter).subscribe(httpResponse => {
-            $.unblockUI();
+        const condition = this.conditionForView.clone();
+
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+
+        this.generalLedgerService.asyncLedgerEntryBy(condition).subscribe(httpResponse => {
+            notify.close();
 
             component.totalAmount = new TotalAmount();
 
             component.ledgers = httpResponse;
             component.ledgers.forEach(function (keyValuePair: any, index: number, array: any[]) {
-                var balanceAmount = 0;
+                let balanceAmount = 0;
                 keyValuePair.value.forEach(function (value: any, index: number, array: any[]) {
-                    value.entryTradingDay = moment(value.entryTradingDay);
-                    value.entryAmount = numeral(value.entryAmount);
+                    value.tradingDay = moment(value.tradingDay);
+                    const amount = value.entry.amount = numeral(value.entry.amount);
 
-                    if (value.entryType == EntryType.Debits)
-                        balanceAmount = balanceAmount + value.entryAmount.value();
-                    else if (value.entryType == EntryType.Credits)
-                        balanceAmount = balanceAmount - value.entryAmount.value();
+                    if (value.entry.type === EntryType.Debits)
+                        balanceAmount = balanceAmount + amount.value();
+                    else if (value.entry.type === EntryType.Credits)
+                        balanceAmount = balanceAmount - amount.value();
 
                     value.balanceAmount = numeral(balanceAmount);
                 });
 
-                component.totalAmount.input(keyValuePair.key.accountingSubjectType, balanceAmount);
+                component.totalAmount.input(keyValuePair.key.type, balanceAmount);
                 keyValuePair.key.isExpand = false;
                 keyValuePair.key.total = numeral(balanceAmount);
             });
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     expand(keyValuePair: any) {
@@ -87,12 +90,12 @@ declare const $: any;
     }
 
     clear() {
-        this.conditionForView = new EntryForCondition();
+        this.conditionForView = new Condition();
 
-        var entryTradingDayBegin = moment().add(-3, 'M');
-        this.conditionForView.entryTradingDayBegin = { date: { year: entryTradingDayBegin.year(), month: entryTradingDayBegin.month() + 1, day: entryTradingDayBegin.date() } };
+        const tradingDayBegin = moment().add(-3, 'M');
+        this.conditionForView.tradingDayBegin = { date: { year: tradingDayBegin.year(), month: tradingDayBegin.month() + 1, day: tradingDayBegin.date() } };
 
-        var entryTradingDayEnd = moment();
-        this.conditionForView.entryTradingDayEnd = { date: { year: entryTradingDayEnd.year(), month: entryTradingDayEnd.month() + 1, day: entryTradingDayEnd.date() } };
+        const tradingDayEnd = moment();
+        this.conditionForView.tradingDayEnd = { date: { year: tradingDayEnd.year(), month: tradingDayEnd.month() + 1, day: tradingDayEnd.date() } };
     }
 }

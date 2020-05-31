@@ -40,7 +40,7 @@ namespace AccountingSystem.Web
             services.AddScoped<AccountingSubjectRepository>();
             services.AddScoped<AuthorizationRepository>();
             services.AddScoped<BookRepository>();
-            services.AddScoped<EntryRepository>();
+            services.AddScoped<DetailRepository>();
 
             #endregion
 

@@ -6,19 +6,13 @@ import { HttpErrorResponseUtility, StringUtility } from '../utilities/commonUtil
 
 export class MaintenanceBookUtility {
     static GetConfirmMessageModal(onClicked: any): ModalUtilityModel {
-        var result = new ModalUtilityModel();
+        const result = new ModalUtilityModel();
         result.title = "是否繼續進行?"
         result.messages = [];
         result.messages.push("目前存在尚在編輯後尚未儲存的資料，若要放棄請點選繼續，否則請取消");
         result.buttons = [];
         result.buttons.push(new Button('Confirm', 'btn btn-default', onClicked));
         result.buttons.push(new Button('Cancel', 'btn btn-default', function () { this.hide(); }.bind(result)));
-        return result;
-    }
-
-    static GetCompleteMessageModal() {
-        var result = new ModalUtilityModel();
-        result.title = "儲存完成";
         return result;
     }
 
@@ -38,23 +32,23 @@ export class MaintenanceBookUtility {
             }.bind(component),
             columns: [
                 {
-                    data: "bookName",
-                    title: "Name",
+                    data: "name",
+                    title: "名稱",
                     type: 'autocomplete',
                     source: function (query: any, process: any) {
-                        component.maintenanceBookService.asyncSelectBookNameBy(query).subscribe(function (httpResponse: any) {
+                        component.maintenanceBookService.asyncSelectNameBy(query).subscribe(function (httpResponse: any) {
                             let result: string[] = [];
                             httpResponse.forEach(function (value: string, index: number, array: any[]) {
                                 result.push(value);
                             });
                             process(result);
-                        }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+                        }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Notify(httpErrorResponse); });
                     },
                     strict: false
                 },
                 {
-                    data: "bookReader",
-                    title: "Reader"
+                    data: "reader",
+                    title: "使用者"
                 }],
             stretchH: 'last'
         };
@@ -64,15 +58,15 @@ export class MaintenanceBookUtility {
         var autocompleteUtilityModel = new AutocompleteUtilityModel();
 
         autocompleteUtilityModel.onValueChanged = function (value: string): string {
-            component.conditionForView.bookName = value;
-            component.maintenanceBookService.asyncSelectBookNameBy(StringUtility.SelectLastValue(value)).subscribe(function (httpResponse: any) {
+            component.conditionForView.name = value;
+            component.maintenanceBookService.asyncSelectNameBy(StringUtility.SelectLastValue(value)).subscribe(function (httpResponse: any) {
                 var result = new Dictionary();
                 httpResponse.forEach(function (value: string, index: number, array: any[]) {
                     result[value] = value;
                 });
                 autocompleteUtilityModel.menu = result;
                 autocompleteUtilityModel.displayMenu();
-            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, component.errorMessageModal); });
+            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Notify(httpErrorResponse); });
             return value;
         };
 
@@ -84,7 +78,7 @@ export class MaintenanceBookUtility {
             else if (item.target)
                 result = item.target.attributes.key.value;
 
-            component.conditionForView.bookName = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
+            component.conditionForView.name = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
         }
 
         return autocompleteUtilityModel

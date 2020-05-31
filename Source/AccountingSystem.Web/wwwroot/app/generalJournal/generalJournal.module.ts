@@ -9,11 +9,10 @@ import { MyDatePickerModule } from 'mydatepicker';
 import { GeneralJournalComponent } from './generalJournal.component';
 
 import { AutocompleteUtilityComponent } from '../utilities/autocompleteUtility/autocompleteUtility.component';
-import { ModalUtilityComponent } from '../utilities/modalUtility/ModalUtility.component';
 
 @NgModule({
     imports: [BrowserModule, HttpClientModule, FormsModule, MyDatePickerModule, HotTableModule.forRoot()],
-    declarations: [GeneralJournalComponent, AutocompleteUtilityComponent, ModalUtilityComponent],
+    declarations: [GeneralJournalComponent, AutocompleteUtilityComponent],
     bootstrap: [GeneralJournalComponent]
 })
 export class GeneralJournalModule { }

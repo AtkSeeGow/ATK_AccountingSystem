@@ -7,9 +7,10 @@ import { GeneralJournalUtility } from './generalJournal.domain';
 import { GeneralJournalService } from './generalJournal.service';
 
 import { AutocompleteUtilityModel } from '../utilities/autocompleteUtility/autocompleteUtility.model'
-import { ModalUtilityModel, Button } from '../utilities/modalUtility/modalUtility.model'
 import { HttpErrorResponseUtility, DatePickerUtility } from '../utilities/commonUtility.component'
-import { Entry, EntryForCondition, EntryTypeUtility } from '../utilities/entryUtility.component'
+import { Entry, EntryTypeUtility } from '../utilities/entryUtility.component'
+import { Detail } from '../utilities/detailUtility.component'
+import { Condition } from '../utilities/conditionUtility.component'
 
 declare const $: any;
 
@@ -20,20 +21,16 @@ declare const $: any;
 }) export class GeneralJournalComponent implements AfterViewInit, AfterViewChecked {
     DatePickerUtility = DatePickerUtility;
 
-    conditionForFilter: EntryForCondition = new EntryForCondition();
-    conditionForView: EntryForCondition = new EntryForCondition();
+    conditionForView: Condition = new Condition();
 
     handsontableId: "handsontableId"
     handsontableGridSettings: Handsontable.GridSettings = GeneralJournalUtility.GetGridSettings(this);
 
-    entrys: Entry[] = [];
+    detail: Detail = new Detail();
+    details: Detail[] = [];
 
     accountingSubjectAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralJournalUtility.GetAccountingSubjectAutocompleteUtilityModel(this);
-    bookNameAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralJournalUtility.GetBookNameAutocompleteUtilityModel(this);
-
-    confirmMessageModal: ModalUtilityModel = GeneralJournalUtility.GetConfirmMessageModal(function () { this.filter(true); this.confirmMessageModal.hide(); }.bind(this));
-    completeMessageModal: ModalUtilityModel = GeneralJournalUtility.GetCompleteMessageModal();
-    errorMessageModal: ModalUtilityModel = new ModalUtilityModel();
+    nameAutocompleteUtilityModel: AutocompleteUtilityModel = GeneralJournalUtility.GetBookNameAutocompleteUtilityModel(this);
 
     constructor(
         private cdRef: ChangeDetectorRef,
@@ -46,51 +43,56 @@ declare const $: any;
 
     ngAfterViewInit() {
         this.clear();
-        this.filter(true);
+        this.filter();
     };
 
-    filter(isProceedDirectly: boolean) {
-        var component = this;
+    filter() {
+        const component = this;
 
-        if (!isProceedDirectly) {
-            if (this.entrys.filter(function (value: Entry, index: number, array: Entry[]) { return value.isEdit }).length > 0) {
-                this.confirmMessageModal.show();
-                return;
-            }
-        }
+        const condition = this.conditionForView.clone();
 
-        this.conditionForFilter = this.conditionForView.clone();
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
 
-        $.blockUI();
-        this.generalJournalService.asyncFetchEntryBy(this.conditionForFilter).subscribe(httpResponse => {
-            $.unblockUI();
-            component.entrys = httpResponse;
-            component.entrys.forEach(function (value: Entry, index: number, array: any[]) {
-                value.entryTradingDay = moment(value.entryTradingDay).format("YYYY/MM/DD");
-                value.entryType = EntryTypeUtility.ToString(value.entryType);
-                value.isEdit = false;
+        this.generalJournalService.asyncFetchEntryBy(condition).subscribe(httpResponse => {
+            notify.close();
+            component.details = httpResponse;
+            component.details.forEach(function (detail: Detail) {
+                detail.tradingDay = moment(detail.tradingDay).format("YYYY/MM/DD");
+                detail.entrys.forEach(function (entry: Entry) {
+                    entry.type = EntryTypeUtility.ToString(entry.type);
+                });
             });
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
-    save() {
-        var component = this;
+    save(detail: Detail) {
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
 
-        $.blockUI();
-        this.generalJournalService.asyncSaveEntryBy(this.conditionForFilter, this.entrys).subscribe(httpResponse => {
-            $.unblockUI();
-            this.filter(true);
-            this.completeMessageModal.show();
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        this.generalJournalService.asyncSaveBy(Detail.Clone(detail)).subscribe(httpResponse => {
+            notify.close();
+            this.filter();
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
+    }
+
+    delete(detail: Detail) {
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' }});
+
+        this.generalJournalService.asyncDeleteBy(Detail.Clone(detail)).subscribe(httpResponse => {
+            notify.close();
+            this.filter();
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     clear() {
-        this.conditionForView = new EntryForCondition();
+        this.conditionForView = new Condition();
 
-        var entryTradingDayBegin = moment().add(-3, 'M');
-        this.conditionForView.entryTradingDayBegin = { date: { year: entryTradingDayBegin.year(), month: entryTradingDayBegin.month() + 1, day: entryTradingDayBegin.date() } };
+        this.accountingSubjectAutocompleteUtilityModel.inputValue = '';
+        this.nameAutocompleteUtilityModel.inputValue = '';
 
-        var entryTradingDayEnd = moment();
-        this.conditionForView.entryTradingDayEnd = { date: { year: entryTradingDayEnd.year(), month: entryTradingDayEnd.month() + 1, day: entryTradingDayEnd.date() } };
+        let tradingDayBegin = moment().add(-3, 'M');
+        this.conditionForView.tradingDayBegin = { date: { year: tradingDayBegin.year(), month: tradingDayBegin.month() + 1, day: tradingDayBegin.date() } };
+
+        let tradingDayEnd = moment();
+        this.conditionForView.tradingDayBegin = { date: { year: tradingDayBegin.year(), month: tradingDayBegin.month() + 1, day: tradingDayBegin.date() } };
     }
 }

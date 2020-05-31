@@ -1,27 +1,21 @@
-﻿import { IMyDpOptions, IMyDateModel } from 'mydatepicker';
-
-import { ModalUtilityModel } from './modalUtility/modalUtility.model';
+﻿import { IMyDpOptions } from 'mydatepicker';
 
 declare const $: any;
 
 export class HttpErrorResponseUtility {
-    static Handler(httpErrorResponse: any, modalUtilityModel: ModalUtilityModel) {
-        $.unblockUI();
+    static Notify(httpErrorResponse: any) {
         var response = httpErrorResponse;
 
-        modalUtilityModel.messages = [];
         if (httpErrorResponse.status == 400 && httpErrorResponse.error.errorMessages) {
-            for (var key in httpErrorResponse.error.errorMessages)
-                modalUtilityModel.messages.push(httpErrorResponse.error.errorMessages[key]);
+            for (let key in httpErrorResponse.error.errorMessages)
+                $.notify({ icon: "tim-icons icon-bell-55", message: httpErrorResponse.error.errorMessages[key] }, { type: 'warning', delay: 0, placement: { from: 'top', align: 'right' } });
         }
         else if (httpErrorResponse.status == 500 && httpErrorResponse.error.message) {
-            modalUtilityModel.messages.push(httpErrorResponse.error.message);
+            $.notify({ icon: "tim-icons icon-bell-55", message: httpErrorResponse.error.message }, { type: 'warning', delay: 0, placement: { from: 'top', align: 'right' } });
         }
         else {
-            modalUtilityModel.messages.push("系統發生錯誤，請與系統管理員聯絡。");
+            $.notify({ icon: "tim-icons icon-bell-55", message: "系統發生錯誤，請與系統管理員聯絡。" }, { type: 'warning', delay: 0, placement: { from: 'top', align: 'right' } });
         }
-        
-        modalUtilityModel.show();
     }
 }
 
@@ -37,12 +31,12 @@ export class DatePickerUtility {
 
 export class StringUtility {
     static SeparationSymbolMerge(originValue: string, mergeValue: string): string {
-        var result = "";
+        let result = "";
 
-        if (originValue == null)
+        if (originValue === null)
             return result;
 
-        var openParenthesisLastIndexOf = originValue.lastIndexOf(',');
+        const openParenthesisLastIndexOf = originValue.lastIndexOf(',');
         if (openParenthesisLastIndexOf != -1)
             result = originValue.substring(0, openParenthesisLastIndexOf) + ', ' + mergeValue;
         else
@@ -52,12 +46,12 @@ export class StringUtility {
     }
 
     static SelectLastValue(value: string): string {
-        var result = "";
+        let result = "";
 
-        if (value == null)
+        if (value === null)
             return result;
 
-        var openParenthesisLastIndexOf = value.lastIndexOf(',');
+        const openParenthesisLastIndexOf = value.lastIndexOf(',');
         if (openParenthesisLastIndexOf != -1)
             result = value.substring(openParenthesisLastIndexOf + 1, value.length);
         else

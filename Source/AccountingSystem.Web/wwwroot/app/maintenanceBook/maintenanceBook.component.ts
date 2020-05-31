@@ -1,4 +1,4 @@
-﻿import { Component, AfterViewInit, ChangeDetectorRef, ViewChild, AfterViewChecked } from '@angular/core';
+﻿import { Component, AfterViewInit, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 
 import * as moment from 'moment';
 import * as Handsontable from 'handsontable';
@@ -7,8 +7,8 @@ import { MaintenanceBookUtility } from './maintenanceBook.domain';
 import { MaintenanceBookService } from './maintenanceBook.service';
 
 import { AutocompleteUtilityModel } from '../utilities/autocompleteUtility/autocompleteUtility.model'
-import { ModalUtilityModel, Button } from '../utilities/modalUtility/modalUtility.model'
-import { HttpErrorResponseUtility, DatePickerUtility } from '../utilities/commonUtility.component'
+import { ModalUtilityModel } from '../utilities/modalUtility/modalUtility.model'
+import { HttpErrorResponseUtility } from '../utilities/commonUtility.component'
 import { Book } from '../utilities/bookUtility.component'
 
 declare const $: any;
@@ -29,8 +29,6 @@ declare const $: any;
     nameAutocompleteUtilityModel: AutocompleteUtilityModel = MaintenanceBookUtility.GetNameAutocompleteUtilityModel(this);
 
     confirmMessageModal: ModalUtilityModel = MaintenanceBookUtility.GetConfirmMessageModal(function () { this.filter(true); this.confirmMessageModal.hide(); }.bind(this));
-    completeMessageModal: ModalUtilityModel = MaintenanceBookUtility.GetCompleteMessageModal();
-    errorMessageModal: ModalUtilityModel = new ModalUtilityModel();
 
     constructor(
         private cdRef: ChangeDetectorRef,
@@ -47,7 +45,7 @@ declare const $: any;
     };
 
     filter(isProceedDirectly: boolean) {
-        var component = this;
+        const component = this;
 
         if (!isProceedDirectly) {
             if (this.books.filter(function (value: Book, index: number, array: Book[]) { return value.isEdit }).length > 0) {
@@ -58,28 +56,26 @@ declare const $: any;
 
         this.conditionForFilter = Book.Clone(this.conditionForView);
 
-        $.blockUI();
-        this.maintenanceBookService.asyncFetchBookBy(this.conditionForFilter).subscribe(httpResponse => {
-            $.unblockUI();
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+        this.maintenanceBookService.asyncFetchBy(this.conditionForFilter).subscribe(httpResponse => {
+            notify.close();
             component.books = httpResponse;
             component.books.forEach(function (value: Book, index: number, array: any[]) {
                 value.isEdit = false;
             });
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     save() {
-        var component = this;
-
-        $.blockUI();
-        this.maintenanceBookService.asyncSaveBookBy(this.conditionForFilter, this.books).subscribe(httpResponse => {
-            $.unblockUI();
+        const notify = $.notify({ icon: "tim-icons icon-bell-55", message: "Please Wait" }, { type: 'info', delay: 0, placement: { from: 'top', align: 'right' } });
+        this.maintenanceBookService.asyncSaveBy(this.conditionForFilter, this.books).subscribe(httpResponse => {
+            notify.close();
             this.filter(true);
-            this.completeMessageModal.show();
-        }, httpErrorResponse => { HttpErrorResponseUtility.Handler(httpErrorResponse, this.errorMessageModal); });
+        }, httpErrorResponse => { HttpErrorResponseUtility.Notify(httpErrorResponse); });
     }
 
     clear() {
         this.conditionForView = new Book();
+        this.nameAutocompleteUtilityModel.inputValue = '';
     }
 }

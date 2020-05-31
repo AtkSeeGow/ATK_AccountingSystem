@@ -26,6 +26,6 @@ export class GeneralGraphService {
         if (conditionForFilter.entryTradingDayEnd && conditionForFilter.entryTradingDayEnd != '')
             conditionForFilter.entryTradingDayEnd = new Date(conditionForFilter.entryTradingDayEnd);
 
-        return this.http.post<any>('Entry/GraphBy', conditionForFilter);
+        return this.http.post<any>('Detail/GraphBy', conditionForFilter);
     };
 }

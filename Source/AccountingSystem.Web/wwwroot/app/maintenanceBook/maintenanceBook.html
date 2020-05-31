@@ -1,34 +1,36 @@
 ﻿<div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Maintenance Book</h1>
+        <h1 class="page-header">日記簿名稱</h1>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <p></p>
-            </div>
-            <div class="panel-body">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-6 col-md-12">
                         <div class="form-group">
-                            <label for="bookName" class="text-info">Name:</label>
+                            <label>名稱</label>
                             <autocompleteUtilityComponent [autocompleteUtilityModel]="nameAutocompleteUtilityModel"></autocompleteUtilityComponent>
                         </div>
                     </div>﻿
-                    <div class="col-lg-5">
+                    <div class="col-lg-6 col-md-12">
                         <div class="form-group">
-                            <label for="bookReader" class="text-info">Reader:</label>
-                            <input type="text" class="form-control" name="bookReader" value="" [(ngModel)]="conditionForView.bookReader" />
+                            <label>使用者</label>
+                            <input type="text" class="form-control" name="reader" value="" [(ngModel)]="conditionForView.reader" />
                         </div>
                     </div>﻿
-                    <div class="col-lg-2" style="text-align: center;">
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
                         <div class="form-group">
-                            <br />
-                            <button (click)="filter(false)" type="submit" class="btn btn-default">Filter</button>
-                            <button (click)="clear()" type="reset" class="btn btn-default">Clear</button>
+                            <button (click)="filter(false)" type="submit" class="btn btn-default" style="width: 100%">查詢</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="form-group">
+                            <button (click)="clear()" type="reset" class="btn btn-default" style="width: 100%">清空</button>
                         </div>
                     </div>
                 </div>
@@ -38,25 +40,33 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <p></p>
-            </div>
-            <div class="panel-body">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="form-group" style="text-align:right">
-                            <button (click)="save()" type="submit" class="btn btn-default">Save</button>
-                        </div>
-                        <div class="form-group">
-                            <hot-table [hotId]="handsontableId"
-                                       [settings]="handsontableGridSettings"
-                                       [data]="books">
-                            </hot-table>
-                        </div>
-                        <div class="form-group" style="text-align:right">
-                            <button (click)="save()" type="submit" class="btn btn-default">Save</button>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <p></p>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="text-align:right">
+                                            <button (click)="save()" type="submit" class="btn btn-default">儲存</button>
+                                        </div>
+                                        <div class="form-group">
+                                            <hot-table [hotId]="handsontableId"
+                                                       [settings]="handsontableGridSettings"
+                                                       [data]="books">
+                                            </hot-table>
+                                        </div>
+                                        <div class="form-group" style="text-align:right">
+                                            <button (click)="save()" type="submit" class="btn btn-default">儲存</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -66,5 +76,3 @@
 </div>
 
 <modalUtilityComponent [modalUtilityModel]="confirmMessageModal"></modalUtilityComponent>
-<modalUtilityComponent [modalUtilityModel]="completeMessageModal"></modalUtilityComponent>
-<modalUtilityComponent [modalUtilityModel]="errorMessageModal"></modalUtilityComponent>

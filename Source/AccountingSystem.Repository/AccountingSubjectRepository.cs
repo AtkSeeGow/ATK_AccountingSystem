@@ -1,10 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using AccountingSystem.Domain;
+using AccountingSystem.Domain.Enum;
+using AccountingSystem.Domain.Options;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AccountingSystem.Domain;
-using AccountingSystem.Domain.Enum;
-using AccountingSystem.Domain.Options;
 
 namespace AccountingSystem.Repository
 {
@@ -20,24 +20,19 @@ namespace AccountingSystem.Repository
                 query = string.Empty;
 
             var builder = Builders<AccountingSubject>.Filter;
-
-            var filter = builder.Where(item => 
-                item.AccountingSubjectCode.Contains(query) ||
-                item.AccountingSubjectName.Contains(query) ||
-                item.AccountingSubjectDescription.Contains(query));
-
-            return this.TEntityCollection.Find(filter).SortBy(item => item.AccountingSubjectType).ThenBy(item => item.AccountingSubjectCode).Limit(10).ToList();
+            var filter = builder.Where(item => item.Code.Contains(query) || item.Name.Contains(query) || item.Description.Contains(query));
+            return this.TEntityCollection.Find(filter).SortBy(item => item.Type).ThenBy(item => item.Code).Limit(10).ToList();
         }
 
         public IEnumerable<AccountingSubject> FetchBy(AccountingSubject accountingSubject)
         {
             var filter = this.getFilterDefinition(accountingSubject);
-            return this.TEntityCollection.Find(filter).SortBy(item => item.AccountingSubjectType).ThenBy(item => item.AccountingSubjectCode).ToList();
+            return this.TEntityCollection.Find(filter).SortBy(item => item.Type).ThenBy(item => item.Code).ToList();
         }
 
         public IEnumerable<AccountingSubject> FetchBy(IEnumerable<string> accountingSubjectCodes)
         {
-            return this.TEntityCollection.Find(item => accountingSubjectCodes.Contains(item.AccountingSubjectCode)).ToList();
+            return this.TEntityCollection.Find(item => accountingSubjectCodes.Contains(item.Code)).ToList();
         }
 
         public void Delete(AccountingSubject accountingSubject)
@@ -52,17 +47,17 @@ namespace AccountingSystem.Repository
 
             var filter = builder.Where(item => true);
 
-            if (accountingSubject.AccountingSubjectType != AccountingSubjectType.None)
-                filter = filter & builder.Where(item => item.AccountingSubjectType == accountingSubject.AccountingSubjectType);
+            if (accountingSubject.Type != AccountingSubjectType.None)
+                filter = filter & builder.Where(item => item.Type == accountingSubject.Type);
 
-            if (!string.IsNullOrEmpty(accountingSubject.AccountingSubjectCode))
-                filter = filter & builder.Where(item => item.AccountingSubjectCode.Contains(accountingSubject.AccountingSubjectCode));
+            if (!string.IsNullOrEmpty(accountingSubject.Code))
+                filter = filter & builder.Where(item => item.Code.Contains(accountingSubject.Code));
 
-            if (!string.IsNullOrEmpty(accountingSubject.AccountingSubjectDescription))
-                filter = filter & builder.Where(item => item.AccountingSubjectDescription.Contains(accountingSubject.AccountingSubjectDescription));
+            if (!string.IsNullOrEmpty(accountingSubject.Description))
+                filter = filter & builder.Where(item => item.Description.Contains(accountingSubject.Description));
 
-            if (!string.IsNullOrEmpty(accountingSubject.AccountingSubjectName))
-                filter = filter & builder.Where(item => item.AccountingSubjectName.Contains(accountingSubject.AccountingSubjectName));
+            if (!string.IsNullOrEmpty(accountingSubject.Name))
+                filter = filter & builder.Where(item => item.Name.Contains(accountingSubject.Name));
 
             return filter;
         }

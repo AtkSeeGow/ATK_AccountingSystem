@@ -14,34 +14,34 @@ namespace AccountingSystem.Domain
         /// 科目科目類型
         /// </summary>
         [DataMember]
-        public AccountingSubjectType AccountingSubjectType { get; set; }
+        public AccountingSubjectType Type { get; set; }
 
         /// <summary>
         /// 代碼
         /// </summary>
         [DataMember]
-        public string AccountingSubjectCode { get; set; }
+        public string Code { get; set; }
 
         /// <summary>
         /// 名稱
         /// </summary>
         [DataMember]
-        public string AccountingSubjectName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 描述
         /// </summary>
         [DataMember]
-        public string AccountingSubjectDescription { get; set; }
+        public string Description { get; set; }
 
         #region Public
 
         public bool IsEmptyInstance()
         {
             return
-                string.IsNullOrEmpty(this.AccountingSubjectCode) &&
-                string.IsNullOrEmpty(this.AccountingSubjectName) &&
-                string.IsNullOrEmpty(this.AccountingSubjectDescription);
+                string.IsNullOrEmpty(this.Code) &&
+                string.IsNullOrEmpty(this.Name) &&
+                string.IsNullOrEmpty(this.Description);
         }
 
         #endregion

@@ -9,15 +9,15 @@ export class GeneralLedgerUtility {
         var autocompleteUtilityModel = new AutocompleteUtilityModel();
 
         autocompleteUtilityModel.onValueChanged = function (value: string): string {
-            component.conditionForView.entryAccountingSubject = value;
+            component.conditionForView.accountingSubject = value;
             component.generalLedgerService.asyncAutocompleteAccountingSubject(StringUtility.SelectLastValue(value)).subscribe(function (httpResponse: any) {
                 var result = new Dictionary();
                 httpResponse.forEach(function (value: AccountingSubject, index: number, array: any[]) {
-                    result[value.accountingSubjectCode] = value.accountingSubjectCode + '(' + value.accountingSubjectName + ')'
+                    result[value.code] = value.code + '(' + value.name + ')'
                 });
                 autocompleteUtilityModel.menu = result;
                 autocompleteUtilityModel.displayMenu();
-            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, component.errorMessageModal); });
+            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Notify(httpErrorResponse); });
             return value;
         };
 
@@ -29,7 +29,7 @@ export class GeneralLedgerUtility {
             else if (item.target)
                 result = item.target.attributes.key.value;
 
-            component.conditionForView.entryAccountingSubject = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
+            component.conditionForView.accountingSubject = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
         }
 
         return autocompleteUtilityModel
@@ -39,7 +39,7 @@ export class GeneralLedgerUtility {
         var autocompleteUtilityModel = new AutocompleteUtilityModel();
 
         autocompleteUtilityModel.onValueChanged = function (value: string): string {
-            component.conditionForView.entryBookName = value;
+            component.conditionForView.name = value;
             component.generalLedgerService.asyncSelectBookNameBy(StringUtility.SelectLastValue(value)).subscribe(function (httpResponse: any) {
                 var result = new Dictionary();
                 httpResponse.forEach(function (value: string, index: number, array: any[]) {
@@ -47,7 +47,7 @@ export class GeneralLedgerUtility {
                 });
                 autocompleteUtilityModel.menu = result;
                 autocompleteUtilityModel.displayMenu();
-            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Handler(httpErrorResponse, component.errorMessageModal); });
+            }, function (httpErrorResponse: any) { HttpErrorResponseUtility.Notify(httpErrorResponse); });
             return value;
         };
 
@@ -59,7 +59,7 @@ export class GeneralLedgerUtility {
             else if (item.target)
                 result = item.target.attributes.key.value;
 
-            component.conditionForView.entryBookName = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
+            component.conditionForView.name = autocompleteUtilityModel.inputValue = StringUtility.SeparationSymbolMerge(autocompleteUtilityModel.inputValue, result);
         }
 
         return autocompleteUtilityModel
