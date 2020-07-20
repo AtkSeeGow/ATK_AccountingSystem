@@ -19,7 +19,7 @@
     "http-proxy-middleware": "^0.18.0",
     "jointjs": "1.1.0",
     "lite-server": "latest",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "moment": "^2.21.0",
     "numeral": "latest",
     "rimraf": "latest",
