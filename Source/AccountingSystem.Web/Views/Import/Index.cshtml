@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "匯入";
+}
+
+<importComponent></importComponent>
+
+<script>
+    System.import('@Url.Content("~")/app/import/main').catch(function (err) { console.error(err); });
+</script>
