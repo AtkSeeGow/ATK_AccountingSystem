@@ -4,21 +4,14 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <UserSecretsId>febe7be5-8349-4f35-a810-ad5996879461</UserSecretsId>
-    <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>4.0</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\assets\.gitkeep" />
-    <None Include="wwwroot\assets\css\black-dashboard.css.map" />
-    <None Include="wwwroot\assets\fonts\nucleo.woff2" />
-    <None Include="wwwroot\assets\js\black-dashboard.js" />
-    <None Include="wwwroot\assets\js\black-dashboard.js.map" />
-    <None Include="wwwroot\assets\js\black-dashboard.min.js" />
-    <None Include="wwwroot\assets\js\core\bootstrap.min.js" />
-    <None Include="wwwroot\assets\js\core\jquery.min.js" />
-    <None Include="wwwroot\assets\js\core\popper.min.js" />
-    <None Include="wwwroot\assets\js\plugins\bootstrap-notify.js" />
-    <None Include="wwwroot\assets\js\plugins\perfect-scrollbar.jquery.min.js" />
+    <Compile Remove="wwwroot\assets\**" />
+    <Content Remove="wwwroot\assets\**" />
+    <EmbeddedResource Remove="wwwroot\assets\**" />
+    <None Remove="wwwroot\assets\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,33 +31,13 @@
     <Content Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\IncomeStatement\Index.cshtml">
+    <Content Update="Views\Home\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\BalanceSheet\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\GeneralJournal\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\GeneralGraph\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\GeneralLedger\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Import\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\MaintenanceAccountingSubject\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Login\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\MaintenanceBook\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

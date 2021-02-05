@@ -31,7 +31,7 @@ namespace AccountingSystem.Web
 
             services.AddMvc(config =>
                 config.Filters.Add<AuthorizationFilter>()
-            ).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            ).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             StartupConfiguration.ConfigureServices(services, Configuration);
             

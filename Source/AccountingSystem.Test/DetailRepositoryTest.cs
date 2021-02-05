@@ -15,7 +15,7 @@ namespace AccountingSystem.Test
 
         private readonly MongoDBOptions mongoDBOptions = new MongoDBOptions()
         {
-            ConnectionString = "mongodb://localdocker:27017/",
+            ConnectionString = "mongodb://VMWAREUBUNTU.local:27017/",
             CollectionName = "ATK_AccountingSystem"
         };
 
@@ -45,6 +45,12 @@ namespace AccountingSystem.Test
         public void LedgerBy()
         {
             this.detailRepository.GroupBy(DateTime.Now, DateTime.Now);
+        }
+
+        [Fact]
+        public void FetchAll()
+        {
+            var details = this.detailRepository.FetchAll().Result;
         }
     }
 }

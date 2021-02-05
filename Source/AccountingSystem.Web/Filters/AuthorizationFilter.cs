@@ -36,7 +36,7 @@ namespace AccountingSystem.Web
 
             if (string.IsNullOrEmpty(token))
             {
-                authorizationFilterContext.Result = new RedirectToRouteResult("Default", new RouteValueDictionary(new { controller = "Login" }));
+                authorizationFilterContext.Result = new UnauthorizedResult();
                 return;
             }
 
@@ -51,13 +51,13 @@ namespace AccountingSystem.Web
                 }
                 else
                 {
-                    authorizationFilterContext.Result = new RedirectToRouteResult("Default", new RouteValueDictionary(new { controller = "Login" }));
+                    authorizationFilterContext.Result = new UnauthorizedResult();
                     return;
                 }
             }
             catch
             {
-                authorizationFilterContext.Result = new RedirectToRouteResult("Default", new RouteValueDictionary(new { controller = "Login" }));
+                authorizationFilterContext.Result = new UnauthorizedResult();
                 return;
             }
         }

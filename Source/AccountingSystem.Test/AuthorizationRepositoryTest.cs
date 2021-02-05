@@ -25,8 +25,8 @@ namespace AccountingSystem.Test
         {
             var authorization = new Authorization()
             {
-                Account = "root",
-                Password = "1qaz@WSX"
+                Account = "wewefwef",
+                Password = "wefwefwe"
             };
             this.authorizationRepository.Create(authorization).Wait();
         }
