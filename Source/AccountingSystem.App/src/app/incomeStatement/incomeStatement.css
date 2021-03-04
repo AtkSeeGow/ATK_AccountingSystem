@@ -1,0 +1,23 @@
+.font {
+  font-size: 18px;
+  color: white;
+}
+
+.numeric {
+  font-size: 18px;
+  color: white;
+  text-align: right
+}
+
+.sum {
+  border-top: 1px white solid;
+  border-bottom: white double
+}
+
+th {
+  text-align: center
+}
+
+.total{
+    height:33px
+}

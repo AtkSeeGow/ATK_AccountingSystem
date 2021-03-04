@@ -1,0 +1,16 @@
+﻿<div class="modal fade" [id]="elementId" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{modalModel.title}}</h4>
+            </div>
+            <div class="modal-body">
+                <p *ngFor="let message of modalModel.messages;let i=index;">{{message}}</p>
+            </div>
+            <div class="modal-footer">
+                <button *ngFor="let button of modalModel.buttons; let i=index;" type="button" [ngClass]="button.className" (click)="button.onClicked()">{{button.buttonName}}</button>
+            </div>
+        </div>
+    </div>
+</div>

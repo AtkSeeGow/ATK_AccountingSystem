@@ -1,0 +1,16 @@
+<span [id]="elementId" style="position:relative" class="js-autoComplete">
+    <input type="text"
+           class="form-control"
+           [maxlength]="autocompleteModel.maxlength"
+           [placeholder]="autocompleteModel.placeholder"
+           (keyup)="autocompleteModel.keyup($event)"
+           (click)="autocompleteModel.click($event)"
+           [(ngModel)]="autocompleteModel.inputValue"
+           [ngModelOptions]="{standalone: true}"
+           style="font-size:20px"
+           autocomplete="off">
+    <ul id="ui-id-1"
+        class="ui-menu ui-widget ui-autocomplete ui-front"
+        [style.display]="autocompleteModel.isDisplay? 'block' : 'none'"
+        style="width: 300px; height: 380px; z-index: 999; top:40px"></ul>
+</span>
