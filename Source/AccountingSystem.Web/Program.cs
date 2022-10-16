@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
+using System.Net;
 
 namespace AccountingSystem.Web
 {
@@ -15,6 +16,7 @@ namespace AccountingSystem.Web
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
             .UseNLog()
+            .UseKestrel()
             .UseStartup<Startup>();
     }
 }
