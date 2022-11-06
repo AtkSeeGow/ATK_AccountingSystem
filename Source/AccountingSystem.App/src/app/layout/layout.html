@@ -1,0 +1,71 @@
+<div class="wrapper">
+  <div class="sidebar">
+    <div class="sidebar-wrapper">
+      <ul class="nav">
+        <li id="generalJournal">
+          <a href="./GeneralJournal">
+            <i class="tim-icons icon-money-coins"></i>
+            <p>日記簿</p>
+          </a>
+        </li>
+        <li id="import">
+          <a href="./Import">
+            <i class="tim-icons icon-notes"></i>
+            <p>匯入</p>
+          </a>
+        </li>
+        <li id="generalLedger">
+          <a href="./GeneralLedger">
+            <i class="tim-icons icon-credit-card"></i>
+            <p>分類帳</p>
+          </a>
+        </li>
+        <li id="balanceSheet">
+          <a href="./BalanceSheet">
+            <i class="tim-icons icon-credit-card"></i>
+            <p>資產負債表</p>
+          </a>
+        </li>
+        <li id="incomeStatement">
+          <a href="./IncomeStatement">
+            <i class="tim-icons icon-credit-card"></i>
+            <p>損益表</p>
+          </a>
+        </li>
+        <li id="maintenanceAccountingSubject">
+          <a href="./MaintenanceAccountingSubject">
+            <i class="tim-icons icon-pencil"></i>
+            <p>會計科目</p>
+          </a>
+        </li>
+        <li id="maintenanceBook">
+          <a href="./MaintenanceBook">
+            <i class="tim-icons icon-notes"></i>
+            <p>日記簿名稱</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="copyright">
+          0.0.001.0 ATK_AccountingSystem
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="navbar-wrapper" style="position: fixed; right: 25px; bottom: 25px; z-index: 999;">
+    <div class="navbar-toggle d-inline">
+      <button type="button" class="navbar-toggler" style="padding: 0px;">
+        <i class="tim-icons icon-bullet-list-67" style="color: white; font-size: 25px;" ></i>
+      </button>
+    </div>
+  </div>
+</div>

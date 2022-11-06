@@ -1,0 +1,198 @@
+<layout>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-lg-2 col-md-12">
+              <label>名稱</label>
+              <div class="form-group">
+                <autocompleteComponent [autocompleteModel]="bookNameAutocompleteModel"></autocompleteComponent>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>會計科目</label>
+              <div class="form-group">
+                <autocompleteComponent [autocompleteModel]="accountingSubjectAutocompleteModel"></autocompleteComponent>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>摘要</label>
+              <div class="form-group">
+                <input type="text" class="form-control" name="entrySummary" value="" [(ngModel)]="conditionForView.summary" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+              <label>交易日起</label>
+              <div class="form-group">
+                <input name="tradingDayBegin" class="form-control" angular-mydatepicker [(ngModel)]="conditionForView.tradingDayBegin" 
+                       [options]="DatePickerUtility.DatePickerOptions" #tradingDayBegin="angular-mydatepicker" (click)="tradingDayBegin.openCalendar()" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+              <label>交易日迄</label>
+              <div class="form-group">
+                <input name="tradingDayEnd" class="form-control" angular-mydatepicker [(ngModel)]="conditionForView.tradingDayEnd" 
+                       [options]="DatePickerUtility.DatePickerOptions" #tradingDayEnd="angular-mydatepicker" (click)="tradingDayEnd.openCalendar()" />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <button (click)="filter()" type="submit" class="btn btn-default" style="width:100%">查詢</button>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <button (click)="clear()" type="reset" class="btn btn-default" style="width:100%">清空</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card ">
+        <div class="card-body">
+          <div class="table-responsive" style="overflow: auto; white-space: nowrap;">
+            <table class="table table-striped table-bordered table-hover">
+              <thead class="text-primary">
+                <tr>
+                  <th></th>
+                  <th style="text-align:center; width:15%">無</th>
+                  <th style="text-align:center; width:15%">資產</th>
+                  <th style="text-align:center; width:15%">負債</th>
+                  <th style="text-align:center; width:15%">業主權益</th>
+                  <th style="text-align:center; width:15%">收入</th>
+                  <th style="text-align:center; width:15%">費用</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center">總計</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountNone.value() < 0 ? '(' + totalAmount.totalAmountNone.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountNone.format('0,0') }}</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountAssets.value() < 0 ? '(' + totalAmount.totalAmountAssets.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountAssets.format('0,0') }}</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountLiabilities.value() < 0 ? '(' + totalAmount.totalAmountLiabilities.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountLiabilities.format('0,0') }}</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountOwnerEquity.value() < 0 ? '(' + totalAmount.totalAmountOwnerEquity.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountOwnerEquity.format('0,0') }}</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountRevenues.value() < 0 ? '(' + totalAmount.totalAmountRevenues.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountRevenues.format('0,0') }}</td>
+                  <td style="text-align:right">{{totalAmount.totalAmountExpenses.value() < 0 ? '(' + totalAmount.totalAmountExpenses.format('0,0').replace('-', '') + ')' : totalAmount.totalAmountExpenses.format('0,0') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 col-md-12" *ngFor="let keyValuePair of filterTotal(ledgers, false); let i=index;">
+      <div class="card " style="border-width: 3px; border-style: solid;"
+           [ngStyle]="{'border-color': AccountingSubjectTypeUtility.Color(keyValuePair.key.type) }">
+        <div class="card-body">
+          <div class="table-responsive" (click)="expand(keyValuePair)" style="overflow: auto; white-space: nowrap;">
+            <table class="table tablesorter">
+              <thead class="text-primary">
+                <tr>
+                  <th style="text-align:center; width:25%">科目代碼</th>
+                  <th style="text-align:center; width:25%">科目名稱</th>
+                  <th style="text-align:center; width:25%">科目類型</th>
+                  <th style="text-align:center; width:25%">總計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center">{{keyValuePair.key.code}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.name ? keyValuePair.key.name : ''}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.type ? AccountingSubjectTypeUtility.ToString(keyValuePair.key.type) :''}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.total.value() < 0 ? '(' + keyValuePair.key.total.format('0,0').replace('-', '') + ')' : keyValuePair.key.total.format('0,0') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" *ngIf="keyValuePair.key.isExpand" style="overflow: auto; white-space: nowrap;">
+            <table class="table tablesorter table-bordered table-hover">
+              <thead class="text-primary">
+                <tr>
+                  <th style="text-align:center; width: 10%">名稱</th>
+                  <th style="text-align:center; width: 10%">交易日</th>
+                  <th style="text-align:center">摘要</th>
+                  <th style="text-align:center; width: 10%">借方金額</th>
+                  <th style="text-align:center; width: 10%">貸方金額</th>
+                  <th style="text-align:center; width: 10%">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let value of keyValuePair.value; let i=index;">
+                  <td style="text-align:center">{{value.name}}</td>
+                  <td style="text-align:center">{{value.tradingDay.format("YYYY/MM/DD")}}</td>
+                  <td style="text-align:right">{{value.entry.summary}}</td>
+                  <td style="text-align:right">{{value.entry.type == EntryType.Debits ? value.entry.amount.format('0,0') : '' }}</td>
+                  <td style="text-align:right">{{value.entry.type == EntryType.Credits ? value.entry.amount.format('0,0') : '' }}</td>
+                  <td style="text-align:right">{{value.balanceAmount.value() < 0 ? '(' + value.balanceAmount.format('0,0').replace('-', '') + ')' : value.balanceAmount.format('0,0') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 col-md-12" *ngFor="let keyValuePair of filterTotal(ledgers, true); let i=index;">
+      <div class="card card-plain">
+        <div class="card-body">
+          <div class="table-responsive" (click)="expand(keyValuePair)" style="overflow: auto; white-space: nowrap;">
+            <table class="table tablesorter">
+              <thead class="text-primary">
+                <tr>
+                  <th style="text-align:center; width:25%">科目代碼</th>
+                  <th style="text-align:center; width:25%">科目名稱</th>
+                  <th style="text-align:center; width:25%">科目類型</th>
+                  <th style="text-align:center; width:25%">總計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center">{{keyValuePair.key.code}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.name ? keyValuePair.key.name : ''}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.type ? AccountingSubjectTypeUtility.ToString(keyValuePair.key.type) :''}}</td>
+                  <td style="text-align:center">{{keyValuePair.key.total.value() < 0 ? '(' + keyValuePair.key.total.format('0,0').replace('-', '') + ')' : keyValuePair.key.total.format('0,0') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" *ngIf="keyValuePair.key.isExpand" style="overflow: auto; white-space: nowrap;">
+            <table class="table tablesorter table-bordered table-hover">
+              <thead class="text-primary">
+                <tr>
+                  <th style="text-align:center; width: 10%">名稱</th>
+                  <th style="text-align:center; width: 10%">交易日</th>
+                  <th style="text-align:center">摘要</th>
+                  <th style="text-align:center; width: 10%">借方金額</th>
+                  <th style="text-align:center; width: 10%">貸方金額</th>
+                  <th style="text-align:center; width: 10%">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let value of keyValuePair.value; let i=index;">
+                  <td style="text-align:center">{{value.name}}</td>
+                  <td style="text-align:center">{{value.tradingDay.format("YYYY/MM/DD")}}</td>
+                  <td style="text-align:right">{{value.entry.summary}}</td>
+                  <td style="text-align:right">{{value.entry.type == EntryType.Debits ? value.entry.amount.format('0,0') : '' }}</td>
+                  <td style="text-align:right">{{value.entry.type == EntryType.Credits ? value.entry.amount.format('0,0') : '' }}</td>
+                  <td style="text-align:right">{{value.balanceAmount.value() < 0 ? '(' + value.balanceAmount.format('0,0').replace('-', '') + ')' : value.balanceAmount.format('0,0') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</layout>
