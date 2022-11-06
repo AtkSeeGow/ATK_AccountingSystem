@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AccountingSystem.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "Synchronize"
+    }
+  }
+}

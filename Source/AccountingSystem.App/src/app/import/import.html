@@ -1,0 +1,278 @@
+<layout>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-lg-2 col-md-12">
+              <label>名稱</label>
+              <div class="form-group">
+                <autocompleteComponent [autocompleteModel]="nameAutocompleteModel"></autocompleteComponent>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>會計科目</label>
+              <div class="form-group">
+                <autocompleteComponent [autocompleteModel]="accountingSubjectAutocompleteModel"></autocompleteComponent>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <div class="form-group" style="margin-top: 25px">
+                <span class="btn btn-blue-3 specifyFontSize" style="position:relative; width:100%">
+                  <i class="fa fa-upload"></i>
+                  <span>上傳</span>
+                  <input id="fileUploadAttachment" type="file" name="files" data-url="Api/Import/UploadBy">
+                </span>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <div class="form-group" style="margin-top: 25px">
+                <button (click)="valid()" type="submit" class="btn btn-default" style="width:100%" [attr.disabled]="isDisableValid() ? true : null">驗證</button>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+              <div class="form-group" style="margin-top: 25px">
+                <button (click)="save()" type="submit" class="btn btn-default" style="width: 100%" [attr.disabled]="isDisableSave() ? true : null">儲存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="viewType == ViewType.Check">
+    <div class="col-lg-6 col-md-12">
+      <h2 class="page-header">待處理分錄</h2>
+      <div class="card" *ngFor="let detail of conflictDetails; let i=index;">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <label>日期</label>
+              <div class="form-group">
+                <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                       [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+              <label>名稱</label>
+              <div class="form-group">
+                <input type="text" class="form-control" [(ngModel)]="detail.name" >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+            <div class="form-group">
+              <hot-table [hotId]="detail.id"
+                         [settings]="handsontableGridSettings"
+                         [data]="detail.entrys"
+                         licenseKey="non-commercial-and-evaluation">
+              </hot-table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <button (click)="classify(detail)" type="submit" class="btn btn-default" style="width:100%">完成</button>
+            </div>
+            <div class="col-lg-6 col-md-12">
+              <button (click)="deleteConflictDetails(detail)" type="submit" class="btn btn-warning" style="width:100%">刪除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+      <h2 class="page-header">待確認分錄</h2>
+      <div class="card" *ngFor="let detail of normalDetails; let i=index;">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <label>日期</label>
+              <div class="form-group">
+                <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                       [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+              <label>名稱</label>
+              <div class="form-group">
+                <input type="text" class="form-control" [(ngModel)]="detail.name" >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+            <div class="form-group">
+              <hot-table [hotId]="detail.id"
+                         [settings]="handsontableGridSettings"
+                         [data]="detail.entrys"
+                         licenseKey="non-commercial-and-evaluation">
+              </hot-table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button (click)="deleteNormalDetails(detail)" type="submit" class="btn btn-warning" style="width:100%">刪除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="viewType == ViewType.Valid">
+    <div class="col-md-12" *ngFor="let key of objectKeys(repeatDetails)">
+      <div class="row">
+        <div class="col-lg-8 col-md-12">
+          <h2>{{key}}</h2>
+        </div>
+        <div class="col-lg-4 col-md-12">
+          <button (click)="expand(key)" type="submit" class="btn btn-default" style="width: 100%">顯示已存在分錄</button>
+        </div>
+      </div>
+      <div class="row" *ngIf="repeatDetails[key].isExpand">
+        <div class="col-lg-6 col-md-12">
+          <div class="card" style="border-width:1px;border-style:dashed;border-color:#2dce89;">
+            <div class="card-body" *ngFor="let detail of filter(repeatDetails[key].repeatDetails, true); let i=index;">
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <label>日期</label>
+                  <div class="form-group">
+                    <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                           [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                  <label>名稱</label>
+                  <div class="form-group">
+                    <input type="text" class="form-control" [(ngModel)]="detail.name" >
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+                <div class="form-group">
+                  <hot-table [hotId]="detail.id"
+                             [settings]="handsontableGridSettings"
+                             [data]="detail.entrys"
+                             licenseKey="non-commercial-and-evaluation">
+                  </hot-table>
+                </div>
+              </div>
+              <div class="row" style="height:48px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="card" style="border-width:1px;border-style:dashed;border-color:#2dce89;">
+            <div class="card-body" *ngFor="let detail of filter(repeatDetails[key].normalDetails, true); let i=index;">
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <label>日期</label>
+                  <div class="form-group">
+                    <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                           [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                  <label>名稱</label>
+                  <div class="form-group">
+                    <input type="text" class="form-control" [(ngModel)]="detail.name" >
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+                <div class="form-group">
+                  <hot-table [hotId]="detail.id"
+                             [settings]="handsontableGridSettings"
+                             [data]="detail.entrys"
+                             licenseKey="non-commercial-and-evaluation">
+                  </hot-table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <button (click)="reverseIsRepeat(detail)" type="submit" class="btn btn-default" style="width:100%">更改為不存在分錄</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 col-md-12">
+          <div class="card" style="border-width:1px;border-style:dashed;border-color:#ffd600;">
+            <div class="card-body" *ngFor="let detail of filter(repeatDetails[key].repeatDetails, false); let i=index;">
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <label>日期</label>
+                  <div class="form-group">
+                    <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                           [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                  <label>名稱</label>
+                  <div class="form-group">
+                    <input type="text" class="form-control" [(ngModel)]="detail.name" >
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+                <div class="form-group">
+                  <hot-table [hotId]="detail.id"
+                             [settings]="handsontableGridSettings"
+                             [data]="detail.entrys"
+                             licenseKey="non-commercial-and-evaluation">
+                  </hot-table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <button (click)="update(detail)" type="submit" class="btn btn-default" style="width:100%">更新</button>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                  <button (click)="delete(detail)" type="submit" class="btn btn-warning" style="width:100%">刪除</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="card" style="border-width:1px;border-style:dashed;border-color:#ffd600;">
+            <div class="card-body" *ngFor="let detail of filter(repeatDetails[key].normalDetails, false); let i=index;">
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <label>日期</label>
+                  <div class="form-group">
+                    <input name="tradingDay" class="form-control" angular-mydatepicker [(ngModel)]="detail.tradingDay" 
+                           [options]="DatePickerUtility.DatePickerOptions" #tradingDay="angular-mydatepicker" (click)="tradingDay.openCalendar()" />
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                  <label>名稱</label>
+                  <div class="form-group">
+                    <input type="text" class="form-control" [(ngModel)]="detail.name" >
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12" style="padding-left:0px; padding-right:0px">
+                <div class="form-group">
+                  <hot-table [hotId]="detail.id"
+                             [settings]="handsontableGridSettings"
+                             [data]="detail.entrys"
+                             licenseKey="non-commercial-and-evaluation">
+                  </hot-table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <button (click)="reverseIsRepeat(detail)" type="submit" class="btn btn-default" style="width:100%">更改為存在分錄</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</layout>
